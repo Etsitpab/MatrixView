@@ -17,7 +17,7 @@
  */
 var Tools = Tools ? Tools : undefined;
 if (typeof window === 'undefined') {
-    var Tools = require("../submodules/Tools");
+    Tools = require("../submodules/Tools");
 }
 
 /** A ND-View on any Array.
