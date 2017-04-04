@@ -1,3 +1,6 @@
 [submodule "submodules/Tools"]
 	path = submodules/Tools
 	url = https://github.com/Etsitpab/Tools
+[submodule "submodules/wiki"]
+	path = submodules/wiki
+	url = https://github.com/Etsitpab/MatrixView.wiki.git
