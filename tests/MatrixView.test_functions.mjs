@@ -1,32 +1,32 @@
 /*
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author Baptiste Mazin     <baptiste.mazin@telecom-paristech.fr>
- * @author Guillaume Tartavel <guillaume.tartavel@telecom-paristech.fr>
- */
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+* @author Baptiste Mazin     <baptiste.mazin@telecom-paristech.fr>
+* @author Guillaume Tartavel <guillaume.tartavel@telecom-paristech.fr>
+*/
+
+import Check from "../src/Check.object.mjs";
 
 /** @class MatrixView */
-(function (MatrixView, MatrixView_prototype) {
-    'use strict';
-
+let testExtension = function (MatrixView) {
     /** Function used to test iterators and provide examples on how use them.
-     *
-     * __Also see:__
-     * {@link MatrixView#getIterator},
-     * {@link MatrixView#getSubIterator}.
-     */
-    MatrixView_prototype.iteratorTests = function (result) {
+    *
+    * __Also see:__
+    * {@link MatrixView#getIterator},
+    * {@link MatrixView#getSubIterator}.
+    */
+    MatrixView.iteratorTests = function (result) {
 
         // 1.1 - Simplest way to scan the view
 
@@ -251,7 +251,6 @@
     };
 
     MatrixView._iteratorTests = function (n) {
-        "use strict";
         var view = new MatrixView([5, 5]);
         var result = [
             0, 1, 2, 3, 4,
@@ -261,19 +260,19 @@
             20, 21, 22, 23, 24
         ];
         view.restore().iteratorTests(result)
-            .restore().select([[0, 1, 2, 3, 4]], [[0, 1, 2, 3, 4]]).iteratorTests(result)
-            .restore().select([], [[0, 1, 2, 3, 4]]).iteratorTests(result)
-            .restore().select([[0, 1, 2, 3, 4]], []).iteratorTests(result);
+        .restore().select([[0, 1, 2, 3, 4]], [[0, 1, 2, 3, 4]]).iteratorTests(result)
+        .restore().select([], [[0, 1, 2, 3, 4]]).iteratorTests(result)
+        .restore().select([[0, 1, 2, 3, 4]], []).iteratorTests(result);
 
         result.reverse();
         view.restore().select([-1, -1, 0], [-1, -1, 0]).iteratorTests(result)
-            .restore().select([[4, 3, 2, 1, 0]], [[4, 3, 2, 1, 0]]).iteratorTests(result)
-            .restore().select([[4, 3, 2, 1, 0]], [-1, -1, 0]).iteratorTests(result)
-            .restore().select([-1, -1, 0], [[4, 3, 2, 1, 0]]).iteratorTests(result);
+        .restore().select([[4, 3, 2, 1, 0]], [[4, 3, 2, 1, 0]]).iteratorTests(result)
+        .restore().select([[4, 3, 2, 1, 0]], [-1, -1, 0]).iteratorTests(result)
+        .restore().select([-1, -1, 0], [[4, 3, 2, 1, 0]]).iteratorTests(result);
         var i, times = [];
         n = n === undefined ? 10 : n;
+        var u = 10, v = 10, w = 10, x = 10, y = 10, z = 10;
         for (i = 0; i < n; i++) {
-            var u = 10, v = 10, w = 10, x = 10, y = 10, z = 10;
             times.push(new MatrixView([u, v, w, x, y, z]).iteratorTests());
         }
         times = Matrix.fromArray(times);
@@ -283,6 +282,5 @@
         times.max().display("max");
         return times;
     };
-
-})(MatrixView, MatrixView.prototype);
-
+}
+export default testExtension;

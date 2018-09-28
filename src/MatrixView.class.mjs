@@ -15,10 +15,8 @@
  * @author Baptiste Mazin     <baptiste.mazin@telecom-paristech.fr>
  * @author Guillaume Tartavel <guillaume.tartavel@telecom-paristech.fr>
  */
-var Tools = Tools ? Tools : undefined;
-if (typeof window === 'undefined') {
-    Tools = require("../submodules/Tools");
-}
+
+import Check from "./Check.object.mjs";
 
 /** A ND-View on any Array.
  *
@@ -40,7 +38,6 @@ if (typeof window === 'undefined') {
  * @todo set most of the getters as protected?
  */
 function MatrixView(arg) {
-    'use strict';
 
 
     //////////////////////////////////////////////////////////////////
@@ -58,7 +55,7 @@ function MatrixView(arg) {
 
     // Initialization from size
     var setFromSize = function (sizeIn) {
-        size = Tools.checkSize(sizeIn);
+        size = Check.checkSize(sizeIn);
         indices = [];
 
         // Create view
@@ -138,7 +135,7 @@ function MatrixView(arg) {
      */
     this.restore = function () {
         var v = views.pop();
-        if (Tools.isSet(v)) {
+        if (Check.isSet(v)) {
             setFromView(v);
         } else {
             first = initial.first.slice();
@@ -215,13 +212,13 @@ function MatrixView(arg) {
      *  + If no `dimension`: array containng the number of element along each dimension.
      */
     var getSize = function (d) {
-        if (!Tools.isSet(d)) {
+        if (!Check.isSet(d)) {
             return size.slice();
         }
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.getSize: invalid dimension.');
         }
-        return (Tools.isSet(size[d])) ? size[d] : 1;
+        return (Check.isSet(size[d])) ? size[d] : 1;
     };
 
     /** Test whether the view is indexed by indices.
@@ -245,10 +242,10 @@ function MatrixView(arg) {
      *  True iff the given dimension is indexed by indices.
      */
     var isIndicesIndexed = function (d) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.isIndicesIndexed: invalid dimension.');
         }
-        return Tools.isSet(indices[d]);
+        return Check.isSet(indices[d]);
     };
 
     /** If indexed by indices: get the selected indices.
@@ -273,7 +270,7 @@ function MatrixView(arg) {
      * @todo check the example [0, 4, 2]
      */
     var getIndices = function (d) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.getIndices: invalid dimension.');
         }
         if (!isIndicesIndexed(d)) {
@@ -307,7 +304,7 @@ function MatrixView(arg) {
      * @todo check the example; return NaN as last?
      */
     var getSteps = function (d) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.getSteps: invalid dimension.');
         }
         if (!isIndicesIndexed(d)) {
@@ -438,10 +435,10 @@ function MatrixView(arg) {
      * @todo what if indices-indexed?
      */
     var getFirst = function (d) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.getFirst: invalid dimension.');
         }
-        return Tools.isSet(first[d]) ? first[d] : 0;
+        return Check.isSet(first[d]) ? first[d] : 0;
     };
 
     /** Downsampling step along a given dimension.
@@ -470,13 +467,13 @@ function MatrixView(arg) {
      *
      */
     var getStep = function (d) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.getStep: invalid dimension.');
         }
         if (isIndicesIndexed(d)) {
             throw new Error('MatrixView.getStep: dimension is indexed by indices.');
         }
-        return Tools.isSet(step[d]) ? step[d] : 1;
+        return Check.isSet(step[d]) ? step[d] : 1;
     };
 
     /** Indice+1 of the last selected element on a given dimension.
@@ -504,13 +501,13 @@ function MatrixView(arg) {
      * @todo indice-indexed case (now return -Inf)?
      */
     var getEnd = function (d) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.getEnd: invalid dimension.');
         }
         if (isIndicesIndexed(d)) {
             return -1;
         }
-        var s = Tools.isSet(size[d]) ? size[d] : 1;
+        var s = Check.isSet(size[d]) ? size[d] : 1;
         return (first[d] || 0) + s * (step[d] || 1);
     };
 
@@ -544,7 +541,7 @@ function MatrixView(arg) {
      * @todo Other name (in matrix)? Not private? Remove?
      */
     var pushSingletonDimensions = function (n) {
-        if (!Tools.isInteger(n, 0)) {
+        if (!Check.isInteger(n, 0)) {
             throw new Error('MatrixView.pushSingletonDimensions: invalid dimension.');
         }
         var i;
@@ -594,10 +591,10 @@ function MatrixView(arg) {
      * @chainable
      */
     var selectDimension = function (d, sel) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.select: invalid dimension.');
         }
-        sel = Tools.checkColon(sel, getSize(d));
+        sel = Check.checkColon(sel, getSize(d));
         if (!isIndicesIndexed(d)) {
             first[d] = getFirst(d) + sel[0] * getStep(d);
             step[d] = getStep(d) * sel[1];
@@ -645,12 +642,12 @@ function MatrixView(arg) {
      */
     var selectIndicesDimension = function (d, ind) {
 
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.selectIndicesDimension: Dimension ' +
                             'must be a positive integer.');
         }
 
-        if (!Tools.isArrayOfIntegers(ind, 0, getSize(d) - 1)) {
+        if (!Check.isArrayOfIntegers(ind, 0, getSize(d) - 1)) {
             throw new Error('MatrixView.selectIndicesDimension: Invalid index.');
         }
         ind = Array.prototype.slice.apply(ind);
@@ -694,7 +691,7 @@ function MatrixView(arg) {
      * @chainable
      */
     var selectBooleanDimension = function (d, boolInd) {
-        if (!Tools.isInteger(d, 0)) {
+        if (!Check.isInteger(d, 0)) {
             throw new Error('MatrixView.selectBooleanDimension: invalid dimension.');
         }
         if (boolInd.length !== getSize(d)) {
@@ -745,10 +742,10 @@ function MatrixView(arg) {
      */
     var swapDimensions = function (dimA, dimB) {
         var ndims = getDimLength();
-        if (!Tools.isInteger(dimA, 0)) {
+        if (!Check.isInteger(dimA, 0)) {
             throw new Error('MatrixView.swapDimensions: invalid dimensions.');
         }
-        if (!Tools.isInteger(dimB, 0)) {
+        if (!Check.isInteger(dimB, 0)) {
             throw new Error('MatrixView.swapDimensions: invalid dimensions.');
         }
 
@@ -790,7 +787,7 @@ function MatrixView(arg) {
      */
     var shiftDimension = function (n) {
         var i;
-        if (!Tools.isSet(n)) {
+        if (!Check.isSet(n)) {
             for (i = 0; size.length > 0 && size[0] === 1; i++) {
                 first.shift();
                 step.shift();
@@ -804,7 +801,7 @@ function MatrixView(arg) {
             }
         } else {
             var ndims = getDimLength();
-            if (!Tools.isInteger(n, 1 - ndims, ndims - 1)) {
+            if (!Check.isInteger(n, 1 - ndims, ndims - 1)) {
                 throw new Error('MatrixView.shiftDimension: invalid shift.');
             }
             for (i = 0; i < n; i++) {
@@ -850,7 +847,7 @@ function MatrixView(arg) {
     //////////////////////////////////////////////////////////////////
 
     // New view constructor
-    if (Tools.isArrayLike(arg)) {
+    if (Check.isArrayLike(arg)) {
         return setFromSize(arg);
     }
 
@@ -867,574 +864,575 @@ function MatrixView(arg) {
     throw new Error('MatrixView: invalid argument.');
 }
 
-(function (MatrixView, MatrixView_prototype) {
-    'use strict';
-
-    function getSteps (indices, step) {
-        var i, l = indices.length;
-        var steps = indices.slice();
-        for (i = l - 1; i > 0; i--) {
-            steps[i] -= steps[i - 1];
-            steps[i] *= step;
-        }
-        steps[0] = 0;
-        steps.push(-indices[l - 1] * step - 1);
-        return steps;
+function getSteps (indices, step) {
+    var i, l = indices.length;
+    var steps = indices.slice();
+    for (i = l - 1; i > 0; i--) {
+        steps[i] -= steps[i - 1];
+        steps[i] *= step;
     }
+    steps[0] = 0;
+    steps.push(-indices[l - 1] * step - 1);
+    return steps;
+}
 
-    /**
-     * @class MatrixView.SubIteratorIndices
-     * @private
-     */
-    function SubIteratorIndices (indices, step) {
-        var index, stepIndex, stop;
-        var first = indices[0], steps = getSteps(indices, step || 1);
-        this.iterator = function () {
-            return index += steps[++stepIndex];
-        };
-        this.begin = function (offset) {
-            offset = offset || 0;
-            stepIndex = 0;
-            stop = offset - 1;
-            return (index = offset + first);
-        };
-        this.end = function () {
-            return stop;
-        };
-        this.isEnd = function () {
-            return (index === stop);
-        };
-        this.getPosition = function () {
-            return stepIndex;
-        };
-        this.getIndex = function () {
-            return index;
-        };
-    }
-
-    /**
-     * @class MatrixView.SubIterator
-     * @private
-     */
-    function SubIterator (first, step, end) {
-        var start, stop, index;
-        this.iterator = function () {
-            return (index += step);
-        };
-        this.begin = function (offset) {
-            offset = offset || 0;
-            start = offset + first;
-            stop = offset + end;
-            return (index = start);
-        };
-        this.end = function () {
-            return stop;
-        };
-        this.isEnd = function () {
-            return (index === stop);
-        };
-        this.getPosition = function () {
-            return (index - start) / step;
-        };
-        this.getIndex = function () {
-            return index;
-        };
-    }
-
-    /**
-     * @class MatrixView.Iterator
-     * @private
-     * @constructor Create an iterator for a colon indexed dimension.
-     *
-     * @param {MatrixView} view
-     *  View to iterate on.
-     * @param {Integer} dim
-     *  First dimension to iterate on.
-     */
-    function Iterator (view, dim) {
-        // Subiterators on upper dimensions
-        var it, index, dimLength, first, step, end, stop;
-        function iterateDim (d) {
-            if (d >= dimLength) {
-                return -1;
-            }
-            var i = it[d], val = i.iterator();
-            if (i.isEnd()) {
-                val = iterateDim(d + 1);
-                return (val !== -1) ? i.begin(val) : -1;
-            }
-            return val;
-        }
-        this.iterator = function () {
-            index += step;
-            if (index === stop) {
-                var val = iterateDim(dim + 1);
-                index = (val === -1) ? - 1 : val + first;
-                stop = val + end;
-            }
-            return index;
-        };
-        this.begin = function () {
-            first = view.getFirst(dim);
-            step = view.getStep(dim);
-            end = view.getEnd(dim);
-            dimLength = view.getDimLength();
-            var i, begin;
-            it = new Array(dimLength);
-            for (i = dimLength - 1; i > dim; i--) {
-                it[i] = view.getSubIterator(i);
-                begin = it[i].begin(begin || 0);
-            }
-
-            for (index = 0, i = dim + 1; i < dimLength; i++) {
-                index += view.getFirst(i);
-            }
-            stop = (index + end);
-            index += first;
-            return index;
-        };
-        this.isEnd = function () {
-            return index === -1;
-        };
-        this.end = function () {
-            return -1;
-        };
-        this.getPosition = function () {
-            var i, ie, pos = [], start;
-            if (it[dim + 1]) {
-                start = it[dim + 1].getIndex();
-            } else {
-                start = 0;
-            }
-            pos[0] = (index - start - first) / step;
-            for (i = dim + 1, ie = it.length; i < ie; i++) {
-                pos[i - dim] = it[i].getPosition();
-            }
-            return pos;
-        };
-    }
-
-
-    /**
-     * @class MatrixView.IteratorIndices
-     * @private
-     * @constructor Create an iterator for a indice indexed dimension.
-     *
-     * @param {MatrixView} view
-     *  View to iterate on.
-     * @param {Integer} dim
-     *  First dimension to iterate on.
-     */
-    function IteratorIndices (view, dim) {
-        // For View indiexed by indices
-        var it, index, subIndex, dimLength, first, end, stop;
-        var indices  = view.getIndices(dim);
-        var steps    = view.getSteps(dim);
-        var iterateDim = function (d) {
-            var i = it[d];
-            if (!i) {
-                return -1;
-            }
-            var val = i.iterator();
-            if (i.isEnd()) {
-                val = iterateDim(d + 1);
-                return (val !== -1) ? i.begin(val) : -1;
-            }
-            return val;
-        };
-        /** Iterate and return the new index. */
-        this.iterator = function () {
-            subIndex++;
-            if (subIndex === stop) {
-                var val = iterateDim(dim + 1);
-                if (val === -1) {
-                    return (index = -1);
-                }
-                index = val + first;
-                subIndex = 0;
-            }
-            index += steps[subIndex];
-            return index;
-        };
-        /** Return the first index. */
-        this.begin = function () {
-            first = view.getFirst(dim);
-            end = view.getEnd(dim);
-            dimLength = view.getDimLength();
-            var i, begin;
-            it = new Array(dimLength);
-            for (i = dimLength - 1; i > dim; i--) {
-                it[i] = view.getSubIterator(i);
-                begin = it[i].begin(begin || 0);
-            }
-            for (subIndex = 0, index = 0, i = dim; i < dimLength; i++) {
-                index += view.getFirst(i);
-            }
-            stop = indices.length;
-            return index;
-        };
-        /** Test if the end index is reached. */
-        this.isEnd = function () {
-            return index === -1;
-        };
-        /** Return the end index. */
-        this.end = function () {
-            return -1;
-        };
-        /** Return the position of the iterator. */
-        this.getPosition = function () {
-            var i, ie, pos = [];
-            pos[0] = subIndex;
-            for (i = dim + 1, ie = it.length; i < ie; i++) {
-                pos[i - dim] = it[i].getPosition();
-            }
-            return pos;
-        };
-    }
-
-    /** @class MatrixView */
-
-    /** Get an iterator over the View.
-     *
-     * An iterator is a object with following properties:
-     *
-     *  + `Iterator.begin()`:
-     *      initialize the iterator on a given dimension and returns the first index.
-     *  + `Iterator.iterator()`:
-     *      increment the iterator.
-     *  + `Iterator.isEnd()`:
-     *      return true iff the iterator reached the end of the View.
-     *  + `Iterator.end()`:
-     *      return the final value of the iterator, this means "end of View".
-     *  + `Iterator.getPosition()`:
-     *      return (as an Array) the current position of the iterator over the working dimensions.
-     *
-     * See also:
-     *  {@link MatrixView#getSubIterator}.
-     *
-     * @param {Number} dim
-     *  The iterator works on dimensions `dim` and following.
-     *  Dimensions before `dim` are not iterated over.
-     *
-     * @return {Object}
-     *
-     * @todo redefine the spec; document all members.
-     */
-    MatrixView_prototype.getIterator = function (dim) {
-        // Check parameter
-        if (!Tools.isSet(dim)) {
-            dim = 0;
-        } else if (!Tools.isInteger(dim, 0)) {
-            throw new Error('MatrixView.getIterator: invalid dimension.');
-        }
-
-        if (this.isIndicesIndexed(dim)) {
-            return new IteratorIndices(this, dim);
-        }
-        var it = new Iterator(this, dim);
-        return it;
+/**
+ * @class MatrixView.SubIteratorIndices
+ * @private
+ */
+function SubIteratorIndices (indices, step) {
+    var index, stepIndex, stop;
+    var first = indices[0], steps = getSteps(indices, step || 1);
+    this.iterator = function () {
+        return index += steps[++stepIndex];
     };
-
-    /** Return an iterator over a given dimension of the View.
-     *
-     * The sub-iterator is a function with following properties:
-     *
-     *  + `SubIterator.begin(start)`:
-     *      initialize the iterator with a starting index, return the first index.
-     *  + `SubIterator.iterator()`:
-     *      increment the sub-iterator.
-     *  + `SubIterator.isEnd()`:
-     *      return true iff the sub-iterator reached the end of the dimension.
-     *  + `SubIterator.end()`:
-     *      return the final value of the iterator, this means "end of Dimension".
-     *  + `SubIterator.getPosition()`:
-     *      return the current position of the sub-iterator.
-     *
-     * See also:
-     *  {@link MatrixView#getIterator}.
-     *
-     * @param {Number} dim
-     *  Dimension along which to iterate.
-     *
-     * @return {Function}
-     */
-    MatrixView_prototype.getSubIterator = function (dim) {
-        // Check parameter
-        if (!Tools.isInteger(dim, 0)) {
-            throw new Error('MatrixView.getSubIterator: invalid dimension.');
-        }
-
-        if (this.isIndicesIndexed(dim)) {
-            return new SubIteratorIndices(this.getIndices(dim), 1);
-        }
-        var first = this.getFirst(dim);
-        var step = this.getStep(dim);
-        var end = this.getEnd(dim);
-        return new SubIterator(first, step, end);
+    this.begin = function (offset) {
+        offset = offset || 0;
+        stepIndex = 0;
+        stop = offset - 1;
+        return (index = offset + first);
     };
+    this.end = function () {
+        return stop;
+    };
+    this.isEnd = function () {
+        return (index === stop);
+    };
+    this.getPosition = function () {
+        return stepIndex;
+    };
+    this.getIndex = function () {
+        return index;
+    };
+}
 
-    /** Extract the data of an array to a new array equiped with the current View.
-     *
-     * The new array will have the same type as the input array.
-     * An output array can be provided instead of creating a new array.
-     *
-     * See also:
-     *  {@link MatrixView#extractFrom}.
-     *
-     * @param {Array} dataIn
-     *  Input data array, to be read using the current View.
-     *
-     * @param {Array} [dataOut]
-     *  Output data array.
-     *
-     * @return {Array}
-     *  Output data of extracted values.
-     *
-     * @todo create the new array? write example
-     */
-    MatrixView_prototype.extractTo = function (dataIn, dataOut) {
+/**
+ * @class MatrixView.SubIterator
+ * @private
+ */
+function SubIterator (first, step, end) {
+    var start, stop, index;
+    this.iterator = function () {
+        return (index += step);
+    };
+    this.begin = function (offset) {
+        offset = offset || 0;
+        start = offset + first;
+        stop = offset + end;
+        return (index = start);
+    };
+    this.end = function () {
+        return stop;
+    };
+    this.isEnd = function () {
+        return (index === stop);
+    };
+    this.getPosition = function () {
+        return (index - start) / step;
+    };
+    this.getIndex = function () {
+        return index;
+    };
+}
 
-        // Check arguments
-        if (!Tools.isArrayLike(dataOut)) {
-            throw new Error('MatrixView.extractTo: invalid output data.');
+/**
+ * @class MatrixView.Iterator
+ * @private
+ * @constructor Create an iterator for a colon indexed dimension.
+ *
+ * @param {MatrixView} view
+ *  View to iterate on.
+ * @param {Integer} dim
+ *  First dimension to iterate on.
+ */
+function Iterator (view, dim) {
+    // Subiterators on upper dimensions
+    var it, index, dimLength, first, step, end, stop;
+    function iterateDim (d) {
+        if (d >= dimLength) {
+            return -1;
         }
-        if (dataOut.length !== this.getInitialLength()) {
-            throw new Error('MatrixView.extractTo: Output data length is invalid.');
+        var i = it[d], val = i.iterator();
+        if (i.isEnd()) {
+            val = iterateDim(d + 1);
+            return (val !== -1) ? i.begin(val) : -1;
+        }
+        return val;
+    }
+    this.iterator = function () {
+        index += step;
+        if (index === stop) {
+            var val = iterateDim(dim + 1);
+            index = (val === -1) ? - 1 : val + first;
+            stop = val + end;
+        }
+        return index;
+    };
+    this.begin = function () {
+        first = view.getFirst(dim);
+        step = view.getStep(dim);
+        end = view.getEnd(dim);
+        dimLength = view.getDimLength();
+        var i, begin;
+        it = new Array(dimLength);
+        for (i = dimLength - 1; i > dim; i--) {
+            it[i] = view.getSubIterator(i);
+            begin = it[i].begin(begin || 0);
         }
 
-        // Input iterator
-        var iterator = this.getIterator(1);
-        var i, ie, it = iterator.iterator, b = iterator.begin, e = iterator.end;
-        var y, ye, fy = this.getFirst(0), ly = this.getEnd(0);
-        var steps, ny, dy, s;
-        var yo;
-
-        if (Tools.isArrayLike(dataIn) && dataIn.length === this.getLength()) {
-
-            // Copy an array
-            if (dataOut === dataIn) {
-                throw new Error('MatrixView.extractTo: cannot perform on-place extraction.');
-            }
-            if (this.isIndicesIndexed(0)) {
-                steps = this.getSteps(0);
-                for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
-                    for (s = 0, y = i + fy, ye = i + ly; y !== ye; yo++, y += steps[++s]) {
-                        dataOut[y] = dataIn[yo];
-                    }
-                }
-            } else {
-                dy = this.getStep(0);
-                for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
-                    for (y = i + fy, ny = i + ly; y !== ny; y += dy, yo++) {
-                        dataOut[y] = dataIn[yo];
-                    }
-                }
-            }
-
-        } else if (dataIn.length === 1 || typeof dataIn  === 'number') {
-
-            // Copy a number
-            if (dataIn.length === 1) {
-                dataIn = dataIn[0];
-            }
-            if (this.isIndicesIndexed(0)) {
-                steps = this.getSteps(0);
-                for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
-                    for (s = 0, y = i + fy, ye = i + ly; y !== ye; y += steps[++s]) {
-                        dataOut[y] = dataIn;
-                    }
-                }
-            } else {
-                dy = this.getStep(0);
-                for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
-                    for (y = i + fy, ny = i + ly; y !== ny; y += dy) {
-                        dataOut[y] = dataIn;
-                    }
-                }
-            }
-
+        for (index = 0, i = dim + 1; i < dimLength; i++) {
+            index += view.getFirst(i);
+        }
+        stop = (index + end);
+        index += first;
+        return index;
+    };
+    this.isEnd = function () {
+        return index === -1;
+    };
+    this.end = function () {
+        return -1;
+    };
+    this.getPosition = function () {
+        var i, ie, pos = [], start;
+        if (it[dim + 1]) {
+            start = it[dim + 1].getIndex();
         } else {
-            throw new Error('MatrixView.extractTo: invalid input length.');
+            start = 0;
         }
-
-        return dataOut;
+        pos[0] = (index - start - first) / step;
+        for (i = dim + 1, ie = it.length; i < ie; i++) {
+            pos[i - dim] = it[i].getPosition();
+        }
+        return pos;
     };
+}
 
-    /** Extract data from an array equiped with the current View to a new Array.
-     *
-     * The new array will have the same type as the input array.
-     * An output array can be provided instead of creating a new array.
-     *
-     * See also:
-     *  {@link MatrixView#extractTo}.
-     *
-     * @example
-     *     // Create a View and some data
-     *     var v = new MatrixView([3, 3]);
-     *     var d = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-     *
-     *     // Select third column
-     *     v.selectDimension(1, [2]);
-     *
-     *     // Extract the associated data
-     *     var out = v.extract(d);   // out is: [6, 7, 8]
-     *
-     * @param {Array} dataIn
-     *  Input data array, to be read using the current View.
-     *
-     * @param {Array} [dataOut]
-     *  Output data array.
-     *
-     * @return {Array}
-     *  Output data of extracted values.
-     */
-    MatrixView_prototype.extractFrom = function (dataIn, dataOut) {
 
-        // Check input array
-        if (!Tools.isArrayLike(dataIn)) {
-            throw new Error('MatrixView.extractFrom: invalid input data.');
+/**
+ * @class MatrixView.IteratorIndices
+ * @private
+ * @constructor Create an iterator for a indice indexed dimension.
+ *
+ * @param {MatrixView} view
+ *  View to iterate on.
+ * @param {Integer} dim
+ *  First dimension to iterate on.
+ */
+function IteratorIndices (view, dim) {
+    // For View indiexed by indices
+    var it, index, subIndex, dimLength, first, end, stop;
+    var indices  = view.getIndices(dim);
+    var steps    = view.getSteps(dim);
+    var iterateDim = function (d) {
+        var i = it[d];
+        if (!i) {
+            return -1;
         }
-        if (dataIn.length !== this.getInitialLength()) {
-            throw new Error('MatrixView.extractFrom: input data dimensions mismatch.');
+        var val = i.iterator();
+        if (i.isEnd()) {
+            val = iterateDim(d + 1);
+            return (val !== -1) ? i.begin(val) : -1;
         }
+        return val;
+    };
+    /** Iterate and return the new index. */
+    this.iterator = function () {
+        subIndex++;
+        if (subIndex === stop) {
+            var val = iterateDim(dim + 1);
+            if (val === -1) {
+                return (index = -1);
+            }
+            index = val + first;
+            subIndex = 0;
+        }
+        index += steps[subIndex];
+        return index;
+    };
+    /** Return the first index. */
+    this.begin = function () {
+        first = view.getFirst(dim);
+        end = view.getEnd(dim);
+        dimLength = view.getDimLength();
+        var i, begin;
+        it = new Array(dimLength);
+        for (i = dimLength - 1; i > dim; i--) {
+            it[i] = view.getSubIterator(i);
+            begin = it[i].begin(begin || 0);
+        }
+        for (subIndex = 0, index = 0, i = dim; i < dimLength; i++) {
+            index += view.getFirst(i);
+        }
+        stop = indices.length;
+        return index;
+    };
+    /** Test if the end index is reached. */
+    this.isEnd = function () {
+        return index === -1;
+    };
+    /** Return the end index. */
+    this.end = function () {
+        return -1;
+    };
+    /** Return the position of the iterator. */
+    this.getPosition = function () {
+        var i, ie, pos = [];
+        pos[0] = subIndex;
+        for (i = dim + 1, ie = it.length; i < ie; i++) {
+            pos[i - dim] = it[i].getPosition();
+        }
+        return pos;
+    };
+}
 
-        // Check output array
-        dataOut = dataOut || new dataIn.constructor(this.getLength());
-        if (!Tools.isArrayLike(dataOut)) {
-            throw new Error('MatrixView.extractFrom: invalid output data.');
-        }
-        if (dataOut.length !== this.getLength()) {
-            throw new Error('MatrixView.extractFrom: output data dimensions mismatch.');
-        }
+/** @class MatrixView */
+
+/** Get an iterator over the View.
+ *
+ * An iterator is a object with following properties:
+ *
+ *  + `Iterator.begin()`:
+ *      initialize the iterator on a given dimension and returns the first index.
+ *  + `Iterator.iterator()`:
+ *      increment the iterator.
+ *  + `Iterator.isEnd()`:
+ *      return true iff the iterator reached the end of the View.
+ *  + `Iterator.end()`:
+ *      return the final value of the iterator, this means "end of View".
+ *  + `Iterator.getPosition()`:
+ *      return (as an Array) the current position of the iterator over the working dimensions.
+ *
+ * See also:
+ *  {@link MatrixView#getSubIterator}.
+ *
+ * @param {Number} dim
+ *  The iterator works on dimensions `dim` and following.
+ *  Dimensions before `dim` are not iterated over.
+ *
+ * @return {Object}
+ *
+ * @todo redefine the spec; document all members.
+ */
+MatrixView.prototype.getIterator = function (dim) {
+    // Check parameter
+    if (!Check.isSet(dim)) {
+        dim = 0;
+    } else if (!Check.isInteger(dim, 0)) {
+        throw new Error('MatrixView.getIterator: invalid dimension.');
+    }
+
+    if (this.isIndicesIndexed(dim)) {
+        return new IteratorIndices(this, dim);
+    }
+    var it = new Iterator(this, dim);
+    return it;
+};
+
+/** Return an iterator over a given dimension of the View.
+ *
+ * The sub-iterator is a function with following properties:
+ *
+ *  + `SubIterator.begin(start)`:
+ *      initialize the iterator with a starting index, return the first index.
+ *  + `SubIterator.iterator()`:
+ *      increment the sub-iterator.
+ *  + `SubIterator.isEnd()`:
+ *      return true iff the sub-iterator reached the end of the dimension.
+ *  + `SubIterator.end()`:
+ *      return the final value of the iterator, this means "end of Dimension".
+ *  + `SubIterator.getPosition()`:
+ *      return the current position of the sub-iterator.
+ *
+ * See also:
+ *  {@link MatrixView#getIterator}.
+ *
+ * @param {Number} dim
+ *  Dimension along which to iterate.
+ *
+ * @return {Function}
+ */
+MatrixView.prototype.getSubIterator = function (dim) {
+    // Check parameter
+    if (!Check.isInteger(dim, 0)) {
+        throw new Error('MatrixView.getSubIterator: invalid dimension.');
+    }
+
+    if (this.isIndicesIndexed(dim)) {
+        return new SubIteratorIndices(this.getIndices(dim), 1);
+    }
+    var first = this.getFirst(dim);
+    var step = this.getStep(dim);
+    var end = this.getEnd(dim);
+    return new SubIterator(first, step, end);
+};
+
+/** Extract the data of an array to a new array equiped with the current View.
+ *
+ * The new array will have the same type as the input array.
+ * An output array can be provided instead of creating a new array.
+ *
+ * See also:
+ *  {@link MatrixView#extractFrom}.
+ *
+ * @param {Array} dataIn
+ *  Input data array, to be read using the current View.
+ *
+ * @param {Array} [dataOut]
+ *  Output data array.
+ *
+ * @return {Array}
+ *  Output data of extracted values.
+ *
+ * @todo create the new array? write example
+ */
+MatrixView.prototype.extractTo = function (dataIn, dataOut) {
+
+    // Check arguments
+    if (!Check.isArrayLike(dataOut)) {
+        throw new Error('MatrixView.extractTo: invalid output data.');
+    }
+    if (dataOut.length !== this.getInitialLength()) {
+        throw new Error('MatrixView.extractTo: Output data length is invalid.');
+    }
+
+    // Input iterator
+    var iterator = this.getIterator(1);
+    var i, ie, it = iterator.iterator, b = iterator.begin, e = iterator.end;
+    var y, ye, fy = this.getFirst(0), ly = this.getEnd(0);
+    var steps, ny, dy, s;
+    var yo;
+
+    if (Check.isArrayLike(dataIn) && dataIn.length === this.getLength()) {
+
+        // Copy an array
         if (dataOut === dataIn) {
-            throw new Error('MatrixView.extractFrom: cannot perform on-place extraction.');
+            throw new Error('MatrixView.extractTo: cannot perform on-place extraction.');
         }
-
-        // Input iterator
-        var iterator = this.getIterator(1);
-        var i, ie, it = iterator.iterator, b = iterator.begin, e = iterator.end;
-        var y, ye, fy = this.getFirst(0), ly = this.getEnd(0);
-        var yo;
-
-        // Perform copy
         if (this.isIndicesIndexed(0)) {
-            var steps = this.getSteps(0), s;
+            steps = this.getSteps(0);
             for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
                 for (s = 0, y = i + fy, ye = i + ly; y !== ye; yo++, y += steps[++s]) {
-                    dataOut[yo] = dataIn[y];
+                    dataOut[y] = dataIn[yo];
                 }
             }
         } else {
-            var ny, dy = this.getStep(0);
+            dy = this.getStep(0);
             for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
-                for (y = i + fy, ny = i + ly, ye = i + ly; y !== ye; y += dy, yo++) {
-                    dataOut[yo] = dataIn[y];
+                for (y = i + fy, ny = i + ly; y !== ny; y += dy, yo++) {
+                    dataOut[y] = dataIn[yo];
                 }
             }
         }
 
-        return dataOut;
-    };
+    } else if (dataIn.length === 1 || typeof dataIn  === 'number') {
 
-    /** Extract data from an array to a new Array.
-     *
-     * The new array will have the same type as the input array.
-     * An output array can be provided instead of creating a new array.
-     *
-     * See also:
-     *  {@link MatrixView#extract}.
-     *
-     * @example
-     *     // Create input View and data
-     *     var dIn = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-     *     var vIn = new MatrixView([3, 3]);
-     *     // select third column: 6, 7, 8
-     *     vIn.selectDimension(1, [2]);
-     *
-     *     // Create output View and data
-     *     var dOut = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-     *     var vOut = new MatrixView([3, 3]);
-     *     // select first row: 1, 3, 6
-     *     vOut.selectDimension(0, [0]);
-     *
-     *     // Extract Data
-     *     var out = vIn.extract(dIn, vOut, dOut);
-     *     // out is: [6, 1, 2, 7, 4, 5, 8, 7, 8]
-     *
-     * @param {Array} inputData
-     *  Input data, equipped with the current View.
-     *
-     * @param {MatrixView} outputView
-     *  View for the output array.
-     *
-     * @param {Array} outputData
-     *  Output data, equipped with the `outputView`.
-     *
-     * @return {Array}
-     *  Output data of extracted values.
-     *
-     * @todo merge with 'extractFrom'; output view/data optionals and in any order
-     * @fixme replace !e() by a faster instruction.
-     */
-    MatrixView_prototype.extract = function (dataIn, viewOut, dataOut) {
-
-        // Check arguments
-        if (!Tools.isArrayLike(dataIn)) {
-            throw new Error('MatrixView.extract: invalid input data.');
+        // Copy a number
+        if (dataIn.length === 1) {
+            dataIn = dataIn[0];
         }
-        if (!(viewOut instanceof MatrixView)) {
-            throw new Error('MatrixView.extract: invalid output view.');
-        }
-        if (!Tools.isArrayLike(dataOut)) {
-            throw new Error('MatrixView.extract: invalid output data.');
-        }
-
-        // Check dimensions
-        if (dataIn.length !== this.getInitialLength()) {
-            throw new Error('MatrixView.extract: invalid input data length.');
-        }
-        if (dataOut.length !== viewOut.getInitialLength()) {
-            throw new Error('MatrixView.extract: invalid output data length.');
-        }
-        if (dataOut === dataIn) {
-            throw new Error('MatrixView.extract: cannot perform on-place extraction.');
-        }
-
-        // Iterators
-        var it, i, b, e;
-        var ito, io, bo, ei;
-        var iterator, iteratoro;
-        if (this.isIndicesIndexed(0) && viewOut.isIndicesIndexed(0)) {
-            iterator = this.getIterator(1);
-            it = iterator.iterator;
-            b = iterator.begin;
-            e = iterator.isEnd;
-            var y, ye, yo, fy = it.getFirst(0), ly = it.getEnd(0);
-            var steps = it.getSteps(0), s;
-            for (i = b(), yo = 0; !e(); i = it()) {
-                for (s = 1, y = i + fy, ye = i + ly; s !== ye; yo++, y += steps[s], s++) {
-                    dataOut[yo] = dataIn[y];
+        if (this.isIndicesIndexed(0)) {
+            steps = this.getSteps(0);
+            for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
+                for (s = 0, y = i + fy, ye = i + ly; y !== ye; y += steps[++s]) {
+                    dataOut[y] = dataIn;
                 }
             }
         } else {
-            iterator = this.getIterator(0);
-            it = iterator.iterator;
-            b = iterator.begin;
-            e = iterator.end;
-            iteratoro = viewOut.getIterator(0);
-            bo = iteratoro.begin;
-            ito = iteratoro.iterator;
-            for (i = b(), io = bo(), ei = e(); i !== ei; i = it(), io = ito()) {
-                dataOut[io] = dataIn[i];
+            dy = this.getStep(0);
+            for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
+                for (y = i + fy, ny = i + ly; y !== ny; y += dy) {
+                    dataOut[y] = dataIn;
+                }
             }
         }
 
-        return dataOut;
-    };
+    } else {
+        throw new Error('MatrixView.extractTo: invalid input length.');
+    }
 
-})(MatrixView, MatrixView.prototype);
+    return dataOut;
+};
 
-// For nodejs module.
-if (typeof window === 'undefined') {
-    module.exports = MatrixView;
-}
+/** Extract data from an array equiped with the current View to a new Array.
+ *
+ * The new array will have the same type as the input array.
+ * An output array can be provided instead of creating a new array.
+ *
+ * See also:
+ *  {@link MatrixView#extractTo}.
+ *
+ * @example
+ *     // Create a View and some data
+ *     var v = new MatrixView([3, 3]);
+ *     var d = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+ *
+ *     // Select third column
+ *     v.selectDimension(1, [2]);
+ *
+ *     // Extract the associated data
+ *     var out = v.extract(d);   // out is: [6, 7, 8]
+ *
+ * @param {Array} dataIn
+ *  Input data array, to be read using the current View.
+ *
+ * @param {Array} [dataOut]
+ *  Output data array.
+ *
+ * @return {Array}
+ *  Output data of extracted values.
+ */
+MatrixView.prototype.extractFrom = function (dataIn, dataOut) {
+
+    // Check input array
+    if (!Check.isArrayLike(dataIn)) {
+        throw new Error('MatrixView.extractFrom: invalid input data.');
+    }
+    if (dataIn.length !== this.getInitialLength()) {
+        throw new Error('MatrixView.extractFrom: input data dimensions mismatch.');
+    }
+
+    // Check output array
+    dataOut = dataOut || new dataIn.constructor(this.getLength());
+    if (!Check.isArrayLike(dataOut)) {
+        throw new Error('MatrixView.extractFrom: invalid output data.');
+    }
+    if (dataOut.length !== this.getLength()) {
+        throw new Error('MatrixView.extractFrom: output data dimensions mismatch.');
+    }
+    if (dataOut === dataIn) {
+        throw new Error('MatrixView.extractFrom: cannot perform on-place extraction.');
+    }
+
+    // Input iterator
+    var iterator = this.getIterator(1);
+    var i, ie, it = iterator.iterator, b = iterator.begin, e = iterator.end;
+    var y, ye, fy = this.getFirst(0), ly = this.getEnd(0);
+    var yo;
+
+    // Perform copy
+    if (this.isIndicesIndexed(0)) {
+        var steps = this.getSteps(0), s;
+        for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
+            for (s = 0, y = i + fy, ye = i + ly; y !== ye; yo++, y += steps[++s]) {
+                dataOut[yo] = dataIn[y];
+            }
+        }
+    } else {
+        var ny, dy = this.getStep(0);
+        for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
+            for (y = i + fy, ny = i + ly, ye = i + ly; y !== ye; y += dy, yo++) {
+                dataOut[yo] = dataIn[y];
+            }
+        }
+    }
+
+    return dataOut;
+};
+
+/** Extract data from an array to a new Array.
+ *
+ * The new array will have the same type as the input array.
+ * An output array can be provided instead of creating a new array.
+ *
+ * See also:
+ *  {@link MatrixView#extract}.
+ *
+ * @example
+ *     // Create input View and data
+ *     var dIn = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+ *     var vIn = new MatrixView([3, 3]);
+ *     // select third column: 6, 7, 8
+ *     vIn.selectDimension(1, [2]);
+ *
+ *     // Create output View and data
+ *     var dOut = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+ *     var vOut = new MatrixView([3, 3]);
+ *     // select first row: 1, 3, 6
+ *     vOut.selectDimension(0, [0]);
+ *
+ *     // Extract Data
+ *     var out = vIn.extract(dIn, vOut, dOut);
+ *     // out is: [6, 1, 2, 7, 4, 5, 8, 7, 8]
+ *
+ * @param {Array} inputData
+ *  Input data, equipped with the current View.
+ *
+ * @param {MatrixView} outputView
+ *  View for the output array.
+ *
+ * @param {Array} outputData
+ *  Output data, equipped with the `outputView`.
+ *
+ * @return {Array}
+ *  Output data of extracted values.
+ *
+ * @todo merge with 'extractFrom'; output view/data optionals and in any order
+ * @fixme replace !e() by a faster instruction.
+ */
+MatrixView.prototype.extract = function (dataIn, viewOut, dataOut) {
+
+    // Check arguments
+    if (!Check.isArrayLike(dataIn)) {
+        throw new Error('MatrixView.extract: invalid input data.');
+    }
+    if (!(viewOut instanceof MatrixView)) {
+        throw new Error('MatrixView.extract: invalid output view.');
+    }
+    if (!Check.isArrayLike(dataOut)) {
+        throw new Error('MatrixView.extract: invalid output data.');
+    }
+
+    // Check dimensions
+    if (dataIn.length !== this.getInitialLength()) {
+        throw new Error('MatrixView.extract: invalid input data length.');
+    }
+    if (dataOut.length !== viewOut.getInitialLength()) {
+        throw new Error('MatrixView.extract: invalid output data length.');
+    }
+    if (dataOut === dataIn) {
+        throw new Error('MatrixView.extract: cannot perform on-place extraction.');
+    }
+
+    // Iterators
+    var it, i, b, e;
+    var ito, io, bo, ei;
+    var iterator, iteratoro;
+    if (this.isIndicesIndexed(0) && viewOut.isIndicesIndexed(0)) {
+        iterator = this.getIterator(1);
+        it = iterator.iterator;
+        b = iterator.begin;
+        e = iterator.isEnd;
+        var y, ye, yo, fy = it.getFirst(0), ly = it.getEnd(0);
+        var steps = it.getSteps(0), s;
+        for (i = b(), yo = 0; !e(); i = it()) {
+            for (s = 1, y = i + fy, ye = i + ly; s !== ye; yo++, y += steps[s], s++) {
+                dataOut[yo] = dataIn[y];
+            }
+        }
+    } else {
+        iterator = this.getIterator(0);
+        it = iterator.iterator;
+        b = iterator.begin;
+        e = iterator.end;
+        iteratoro = viewOut.getIterator(0);
+        bo = iteratoro.begin;
+        ito = iteratoro.iterator;
+        for (i = b(), io = bo(), ei = e(); i !== ei; i = it(), io = ito()) {
+            dataOut[io] = dataIn[i];
+        }
+    }
+
+    return dataOut;
+};
+
+import informationExtension from "./MatrixView.informations.mjs";
+informationExtension(MatrixView);
+
+import manipulationExtension from "./MatrixView.manipulation.mjs";
+manipulationExtension(MatrixView);
+
+import testExtension from "../tests/MatrixView.test_functions.mjs";
+testExtension(MatrixView);
+
+export {MatrixView as default, Check}
