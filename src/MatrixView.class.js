@@ -16,7 +16,7 @@
  * @author Guillaume Tartavel <guillaume.tartavel@telecom-paristech.fr>
  */
 
-import Check from "./Check.object.mjs";
+import Check from "./Check.object.js";
 
 /** A ND-View on any Array.
  *
@@ -1426,13 +1426,13 @@ MatrixView.prototype.extract = function (dataIn, viewOut, dataOut) {
     return dataOut;
 };
 
-import informationExtension from "./MatrixView.informations.mjs";
+import informationExtension from "./MatrixView.informations.js";
 informationExtension(MatrixView);
 
-import manipulationExtension from "./MatrixView.manipulation.mjs";
+import manipulationExtension from "./MatrixView.manipulation.js";
 manipulationExtension(MatrixView);
 
-import testExtension from "../tests/MatrixView.test_functions.mjs";
+import testExtension from "../tests/MatrixView.test_functions.js";
 testExtension(MatrixView);
 
 export {MatrixView as default, Check}

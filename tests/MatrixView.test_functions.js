@@ -16,7 +16,7 @@
 * @author Guillaume Tartavel <guillaume.tartavel@telecom-paristech.fr>
 */
 
-import Check from "../src/Check.object.mjs";
+import Check from "../src/Check.object.js";
 
 /** @class MatrixView */
 let testExtension = function (MatrixView) {

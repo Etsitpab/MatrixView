@@ -15,7 +15,7 @@
 * @author Baptiste Mazin     <baptiste.mazin@telecom-paristech.fr>
 * @author Guillaume Tartavel <guillaume.tartavel@telecom-paristech.fr>
 */
-import Check from "./Check.object.mjs";
+import Check from "./Check.object.js";
 
 /**
 * @class MatrixView
