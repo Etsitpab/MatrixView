@@ -1,11 +1,11 @@
-/*global describe test expect*/
-// import fs from "fs";
+/* global describe test expect */
 import MatrixView, {Check} from "../src/MatrixView";
 import getLogger from "@etsitpab/logger";
 
 const logger = getLogger("MatrixView");
 
 describe("MatrixxView First test section", () => {
+
     test("MatrixView tests", () => {
         const size = [1, 2, 3, 4];
         const view = new MatrixView(size);
@@ -40,6 +40,9 @@ describe("MatrixxView First test section", () => {
          const v = new MatrixView([4, 3]);
          v.swapDimensions(0, 1);
          expect(v.getSize()).toEqual([3, 4]);
+         v.swapDimensions(0, 3);
+         expect(v.getSize()).toEqual([1, 4, 1, 3]);
+
     });
 
     test("MatrixView getFirst", () => {
@@ -48,6 +51,54 @@ describe("MatrixxView First test section", () => {
         // Get first values
          expect(v.getFirst(0)).toEqual(2);
          expect(v.getFirst(1)).toEqual(0);
+    });
+
+    test("MatrixView getIndex", () => {
+        const v = new MatrixView([3, 2]);
+        expect(v.getIndex([1, 1])).toEqual(4);
+    });
+
+    test("MatrixView getInitialSize", () => {
+        const v = new MatrixView([5, 5]);
+        v.selectIndicesDimension(0, [1, 3, 4]);
+        v.selectDimension(0, [0, 2, -1]);
+        v.selectIndicesDimension(1, [2]);
+        expect(v.getInitialSize()).toEqual([5, 5]);
+    });
+
+    test("MatrixView save / restore", () => {
+        const v = new MatrixView([5, 5]);
+        v.selectIndicesDimension(0, [1, 3, 4]);
+        expect(v.getSize()).toEqual([3, 5]);
+        v.save();
+        v.selectDimension(0, [0, 2, -1]);
+        v.selectIndicesDimension(1, [2]);
+        expect(v.getSize()).toEqual([2, 1]);
+        v.restore();
+        expect(v.getSize()).toEqual([3, 5]);
+        v.restore();
+        expect(v.getSize()).toEqual([5, 5]);
+    });
+
+    test("MatrixView selectDimension", () => {
+        const v = new MatrixView([5, 5]);
+        const data = [
+             0,  1,  2,  3,  4,
+             5,  6,  7,  8,  9,
+            10, 11, 12, 13, 14,
+            15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24
+        ];
+        {
+            v.selectIndicesDimension(0, [1, 3, 4]);
+            v.selectDimension(0, [0, 2, -1]);
+            // v.selectIndicesDimension(1, [1, 2, 3, 4]);
+            // v.selectIndicesDimension(1, [1]);
+            v.selectIndicesDimension(1, [2]);
+            let out = new Array(v.getLength());
+            v.extractFrom(data, out);
+            expect(out).toEqual([11, 14]);
+        }
     });
 
     test("MatrixView extractFrom", () => {
@@ -74,6 +125,7 @@ describe("MatrixxView First test section", () => {
             expect(out).toEqual([16, 18]);
         }
     });
+
     test("MatrixView extractTo", () => {
         const v = new MatrixView([5, 5]);
         {
@@ -161,6 +213,129 @@ describe("MatrixxView First test section", () => {
         }
     });
 
+    test("MatrixView information extension", () => {
+        const v = new MatrixView([5, 5, 5]);
+        expect(v.ndims()).toBe(3);
+        expect(v.ismatrix()).toBe(false);
+        expect(v.isrow()).toBe(false);
+        expect(v.iscolumn()).toBe(false);
+        expect(v.isvector()).toBe(false);
+        v.select([], [], 0);
+        expect(v.ismatrix()).toBe(true);
+        expect(v.isvector()).toBe(false);
+        expect(v.isrow()).toBe(false);
+        expect(v.iscolumn()).toBe(false);
+        v.select([], 0, []);
+        expect(v.ismatrix()).toBe(true);
+        expect(v.isvector()).toBe(true);
+        expect(v.isrow()).toBe(false);
+        expect(v.iscolumn()).toBe(true);
+        v.select(0, [], []);
+        expect(v.ismatrix()).toBe(true);
+        expect(v.isvector()).toBe(true);
+        expect(v.isrow()).toBe(true);
+        expect(v.iscolumn()).toBe(true);
+        const v2 = new MatrixView([1, 1, 5]);
+        expect(v2.isvector()).toBe(false);
+        expect(v2.isrow()).toBe(false);
+        expect(v2.iscolumn()).toBe(false);
+        const v3 = new MatrixView([1, 5]);
+        expect(v3.ismatrix()).toBe(true);
+        expect(v3.isvector()).toBe(true);
+        expect(v3.isrow()).toBe(true);
+        const v4 = new MatrixView([5, 1]);
+        expect(v4.iscolumn()).toBe(true);
+    });
+
+    test("MatrixView manipulation extension", () => {
+        {
+            const v = new MatrixView([2, 2, 2]);
+            const d = [0, 1, 2, 3, 4, 5, 6, 7];
+            v.permute([2, 1, 0]);
+            let mat = v.extractFrom(d);
+            expect(mat).toEqual([0, 4, 2, 6, 1, 5, 3, 7]);
+
+            v.ipermute([2, 1, 0]);
+            mat = v.extractFrom(d);
+            expect(mat).toEqual(d);
+        }
+        {
+            const v = new MatrixView([2, 2]);
+            const d = [0, 1, 2, 3];
+            let mat = v.rot90();
+            expect(mat.extractFrom(d)).toEqual([2, 0, 3, 1]);
+            mat = v.restore().rot90(2);
+            expect(mat.extractFrom(d)).toEqual([3, 2, 1, 0]);
+            mat = v.restore().rot90(3);
+            expect(mat.extractFrom(d)).toEqual([1, 3, 0, 2]);
+            mat = v.restore().rot90(-1);
+            expect(mat.extractFrom(d)).toEqual([1, 3, 0, 2]);
+            mat = v.restore().rot90(4);
+            expect(mat.extractFrom(d)).toEqual(d);
+        }
+        {
+            const v = new MatrixView([4, 4]);
+            const d = [
+                1, 1, 0, 0,
+                1, 1, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0
+            ];
+            v.circshift([2, -2]);
+            expect(v.extractFrom(d)).toEqual([
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 1, 1,
+                0, 0, 1, 1
+            ]);
+            v.restore().circshift(1, 0);
+            expect(v.extractFrom(d)).toEqual([
+                0, 1, 1, 0,
+                0, 1, 1, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0
+            ]);
+            v.restore().circshift(1, 1);
+            expect(v.extractFrom(d)).toEqual([
+                0, 0, 0, 0,
+                1, 1, 0, 0,
+                1, 1, 0, 0,
+                0, 0, 0, 0
+            ]);
+            v.restore().circshift([1, 1]);
+            expect(v.extractFrom(d)).toEqual([
+                0, 0, 0, 0,
+                0, 1, 1, 0,
+                0, 1, 1, 0,
+                0, 0, 0, 0
+            ]);
+            v.restore().circshift([-1, -1]);
+            expect(v.extractFrom(d)).toEqual([
+                1, 0, 0, 1,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                1, 0, 0, 1
+            ]);
+        }
+        {
+            const v = new MatrixView([5, 2]);
+            const d = [
+                0,  1,  2,  3,  4,
+                5,  6,  7,  8,  9
+            ];
+            v.flipdim(0);
+            expect(v.extractFrom(d)).toEqual([
+                4, 3, 2, 1, 0,
+                9, 8, 7, 6, 5
+            ]);
+            v.flipdim(1);
+            expect(v.extractFrom(d)).toEqual([
+                9, 8, 7, 6, 5,
+                4, 3, 2, 1, 0
+            ]);
+        }
+
+    });
     test(`Test iterators`, () => {
         logger.log("Test 1");
         const view = new MatrixView([5, 5]);
@@ -249,11 +424,11 @@ describe("MatrixxView First test section", () => {
         expect(Check.checkColon(3)).toEqual([3, 1, 3]);
         expect(Check.checkColon([3])).toEqual([3, 1, 3]);
 
-        expect(Check.checkSize(5)).toEqual([5, 1])
-        expect(Check.checkSize([[5, 1]])).toEqual([5, 1])
-        expect(Check.checkSize(5, 'row')).toEqual([1, 5])
-        expect(Check.checkSize(5, 'square')).toEqual([5, 5])
-        expect(Check.checkSize([4, 2, 1])).toEqual([4, 2])
+        expect(Check.checkSize(5)).toEqual([5, 1]);
+        expect(Check.checkSize([[5, 1]])).toEqual([5, 1]);
+        expect(Check.checkSize(5, 'row')).toEqual([1, 5]);
+        expect(Check.checkSize(5, 'square')).toEqual([5, 5]);
+        expect(Check.checkSize([4, 2, 1])).toEqual([4, 2]);
 
         expect(Check.checkSizeEquals([1], [1, 1])).toEqual([1, 1]);
         expect(Check.checkSizeEquals([1, 1], [1, 1, 1])).toEqual([1, 1]);
