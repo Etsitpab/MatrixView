@@ -336,6 +336,7 @@ describe("MatrixxView First test section", () => {
         }
 
     });
+
     test(`Test iterators`, () => {
         logger.log("Test 1");
         const view = new MatrixView([5, 5]);
@@ -356,6 +357,21 @@ describe("MatrixxView First test section", () => {
         iteratorTests(view, result);
         view.restore().select([true, true, true, true, true], [true, true, true, true, true]);
         iteratorTests(view, result);
+        {
+            const {iterator: it, begin: b, end: e, getPosition} = view.getIterator(0);
+            const positions = [];
+            let i, ie;
+            for (i = b(), ie = e(); i !== ie; i = it()) {
+                positions.push(getPosition(i));
+            }
+            expect(positions).toEqual([
+                [ 0, 0 ], [ 1, 0 ], [ 2, 0 ], [ 3, 0 ], [ 4, 0 ],
+                [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ], [ 4, 1 ],
+                [ 0, 2 ], [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 4, 2 ],
+                [ 0, 3 ], [ 1, 3 ], [ 2, 3 ], [ 3, 3 ], [ 4, 3 ],
+                [ 0, 4 ], [ 1, 4 ], [ 2, 4 ], [ 3, 4 ], [ 4, 4 ]
+            ]);
+        }
 
         result.reverse();
 
@@ -367,6 +383,37 @@ describe("MatrixxView First test section", () => {
         iteratorTests(view, result);
         view.restore().select([-1, -1, 0], [[4, 3, 2, 1, 0]]);
         iteratorTests(view, result);
+        {
+            const {iterator: it, begin: b, end: e, getPosition} = view.getIterator(0);
+            const positions = [];
+            let i, ie;
+            for (i = b(), ie = e(); i !== ie; i = it()) {
+                positions.push(getPosition(i));
+            }
+            expect(positions).toEqual([
+                [ 0, 0 ], [ 1, 0 ], [ 2, 0 ], [ 3, 0 ], [ 4, 0 ],
+                [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ], [ 4, 1 ],
+                [ 0, 2 ], [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 4, 2 ],
+                [ 0, 3 ], [ 1, 3 ], [ 2, 3 ], [ 3, 3 ], [ 4, 3 ],
+                [ 0, 4 ], [ 1, 4 ], [ 2, 4 ], [ 3, 4 ], [ 4, 4 ]
+            ]);
+        }
+        {
+            view.restore().select([[4, 3, 2, 1, 0]], [-1, 0]);
+            const {iterator: it, begin: b, end: e, getPosition} = view.getIterator(0);
+            const positions = [];
+            let i, ie;
+            for (i = b(), ie = e(); i !== ie; i = it()) {
+                positions.push(getPosition(i));
+            }
+            expect(positions).toEqual([
+                [ 0, 0 ], [ 1, 0 ], [ 2, 0 ], [ 3, 0 ], [ 4, 0 ],
+                [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ], [ 4, 1 ],
+                [ 0, 2 ], [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 4, 2 ],
+                [ 0, 3 ], [ 1, 3 ], [ 2, 3 ], [ 3, 3 ], [ 4, 3 ],
+                [ 0, 4 ], [ 1, 4 ], [ 2, 4 ], [ 3, 4 ], [ 4, 4 ]
+            ]);
+        }
 
     });
 
@@ -405,8 +452,9 @@ describe("MatrixxView First test section", () => {
         expect(Check.isArrayOfIntegers(Uint8Array.from([1, 2, 3]), 1, 3)).toBe(true);
         expect(Check.isArrayOfIntegers(Uint16Array.from([1, 2, 3]))).toBe(true);
         expect(Check.isArrayOfIntegers(Int16Array.from([1, 2, 3]))).toBe(true);
-
+        expect(Check.isArrayOfIntegers(Int16Array.from([-1, 2, 3]), -10, 10)).toBe(true);
         expect(Check.isArrayOfIntegers(Int8Array.from([-1, 2, 3]), 1, 3)).toBe(false);
+        expect(Check.isArrayOfIntegers(Uint8ClampedArray.from([1, 2, 4]), 1, 3)).toBe(false);
 
         expect(Check.isArrayOfBooleans([true, false, false])).toBe(true);
         expect(Check.isArrayOfBooleans([1, 0, true])).toBe(false);
