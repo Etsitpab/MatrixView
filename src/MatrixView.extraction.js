@@ -42,7 +42,7 @@ export default function extractionExtension (MatrixView) {
 
             // Copy an array
             if (dataOut === dataIn) {
-                throw new Error('MatrixView.extractTo: cannot perform on-place extraction.');
+                throw new Error('MatrixView.extractTo: cannot perform in-place extraction.');
             }
             if (this.isIndicesIndexed(0)) {
                 steps = this.getSteps(0);
