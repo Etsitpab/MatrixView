@@ -206,29 +206,20 @@ export default function manipulationExtension (MatrixView) {
     * @method rot90
     * @chainable
     */
-    MatrixView.prototype.rot90 = function (k) {
-        var errMsg = this.constructor.name + '.rot90: ';
-
-        // Check arguments
-        switch (typeof k) {
-            case 'number':
-            if (!Check.isInteger(k)) {
-                throw new Error(errMsg + 'Argument must be an integer.');
-            }
-            k %= 4;
-            if (k < 0) {
-                k += 4;
-            }
-            break;
-            case 'undefined':
-            k = 1;
-            break;
-            default:
-            throw new Error(errMsg + 'Wrong argument type.');
+    MatrixView.prototype.rot90 = function (k = 1) {
+        const errMsg = `${this.constructor.name}.rot90`;
+        if (!Check.isInteger(k)) {
+            throw new Error(`${errMsg}: Argument must be an integer.`);
+        }
+        k %= 4;
+        if (k < 0) {
+            k += 4;
         }
 
         // Rotate
         switch (k) {
+            case 0:
+            return this;
             case 1:
             return this.swapDimensions(0, 1).flipud();
             case 2:
@@ -236,7 +227,6 @@ export default function manipulationExtension (MatrixView) {
             case 3:
             return this.swapDimensions(0, 1).fliplr();
         }
-        return this;
     };
 
     /** Flip matrix dimension.
@@ -326,7 +316,6 @@ export default function manipulationExtension (MatrixView) {
             var errMsg = "MatrixView.circshift: Invalid arguments.";
             if (Check.isArrayLike(K) && !Check.isSet(dim)) {
                 if (K.length > this.getDimLength()) {
-                    console.log(K.length, this.getDimLength());
                     throw new Error(errMsg);
                 }
                 for (var k = 0, ke = K.length; k < ke; k++) {
