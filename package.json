@@ -1,29 +1,40 @@
 {
-  "name": "matrixview",
-  "version": "1.0.0",
-  "description": "This package provides a class to manipulate multidimensionnal arrays.",
-  "main": "src/MatrixView.class.js",
-  "directories": {
-    "doc": "doc",
-    "test": "tests"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Etsitpab/MatrixView.git"
-  },
-  "keywords": [
-    "multidimensionnal",
-    "array",
-    "matrix",
-    "vector"
-  ],
-  "author": "Baptiste Mazin",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/Etsitpab/MatrixView/issues"
-  },
-  "homepage": "https://github.com/Etsitpab/MatrixView#readme"
+    "name": "matrixview",
+    "version": "1.0.0",
+    "description": "This package provides a class to manipulate multidimensionnal arrays.",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Etsitpab/MatrixView.git"
+    },
+    "author": "Baptiste Mazin",
+    "license": "GPL-3.0",
+    "keywords": [
+        "multidimensionnal",
+        "array",
+        "matrix",
+        "vector"
+    ],
+    "bugs": {
+        "url": "https://github.com/Etsitpab/MatrixView/issues"
+    },
+    "homepage": "https://github.com/Etsitpab/MatrixView#readme",
+    "scripts": {
+        "test": "jest --coverage"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.5.5",
+        "@babel/preset-env": "^7.5.5",
+        "babel-jest": "^24.9.0",
+        "jest": "^24.9.0"
+    },
+    "dependencies": {
+        "@etsitpab/logger": "^1.0.2",
+        "esm": "^3.2.25"
+    },
+    "jest": {
+        "transform": {
+            "\\.js$": "babel-jest"
+        }
+    }
 }

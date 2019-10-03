@@ -17,7 +17,7 @@
 */
 
 /** @class MatrixView */
-let informationExtension = function (MatrixView) {
+export default function informationExtension (MatrixView) {
     /** Returns the number of array dimensions.
     * It is a Matlab alias for {@link MatrixView#getDimLength},
     *
@@ -66,6 +66,4 @@ let informationExtension = function (MatrixView) {
     MatrixView.prototype.ismatrix = function () {
         return this.getSize().length === 2;
     };
-};
-
-export default informationExtension
+}

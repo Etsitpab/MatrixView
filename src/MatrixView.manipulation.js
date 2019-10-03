@@ -21,7 +21,7 @@ import Check from "./Check.object.js";
 * @class MatrixView
 * @namespace MatrixView
 */
-let manipulationExtension = function (MatrixView) {
+export default function manipulationExtension (MatrixView) {
     /** Allow to select an subpart of the MatrixView on each dimension.
     *
     * __Also see:__
@@ -323,7 +323,7 @@ let manipulationExtension = function (MatrixView) {
         };
 
         MatrixView.prototype.circshift = function (K, dim) {
-            var errMsg = "MatrixView.circshift: Invalid arguments."
+            var errMsg = "MatrixView.circshift: Invalid arguments.";
             if (Check.isArrayLike(K) && !Check.isSet(dim)) {
                 if (K.length > this.getDimLength()) {
                     console.log(K.length, this.getDimLength());
@@ -341,6 +341,4 @@ let manipulationExtension = function (MatrixView) {
             throw new Error(errMsg);
         };
     })();
-};
-
-export default manipulationExtension
+}
