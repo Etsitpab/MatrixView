@@ -503,13 +503,6 @@ describe("MatrixxView First test section", () => {
 
         expect(Check.getTypeConstructor("bool")).toBe(Uint8ClampedArray);
         expect(Check.getTypeConstructor(Uint8Array)).toBe(Uint8Array);
-
-        // checkColon
-        // checkRange
-        // checkSize
-        // checkSizeEquals
-        // getTypeConstructor
-        // isSet
     });
 
 });
