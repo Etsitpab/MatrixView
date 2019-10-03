@@ -34,8 +34,19 @@ export default function informationExtension (MatrixView) {
     * @memberof MatrixView
     */
     MatrixView.prototype.isrow = function () {
-        var size = this.getSize();
-        return (size.length === 2 && size[0] === 1);
+        const size = this.getSize();
+        if (size[0] !== 1) {
+            return false;
+        }
+        if (size.length > 2) {
+            let i, ie;
+            for (i = 2, ie = size.length; i < ie; i++) {
+                if (size[i] !== 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     };
 
     /** Test if the view correponds to a column vector or not.
@@ -44,8 +55,19 @@ export default function informationExtension (MatrixView) {
     * @memberof MatrixView
     */
     MatrixView.prototype.iscolumn = function () {
-        var size = this.getSize();
-        return (size.length === 2 && size[1] === 1);
+        const size = this.getSize();
+        if (size[1] !== 1) {
+            return false;
+        }
+        if (size.length > 2) {
+            let i, ie;
+            for (i = 2, ie = size.length; i < ie; i++) {
+                if (size[i] !== 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     };
 
     /** Test if the view corresponds to a vector or not.
@@ -54,8 +76,19 @@ export default function informationExtension (MatrixView) {
     * @memberof MatrixView
     */
     MatrixView.prototype.isvector = function () {
-        var size = this.getSize();
-        return (size.length === 2 && (size[1] === 1 || size[0] === 1));
+        const size = this.getSize();
+        if (size[0] !== 1 && size[1] !== 1) {
+            return false;
+        }
+        if (size.length > 2) {
+            let i, ie;
+            for (i = 2, ie = size.length; i < ie; i++) {
+                if (size[i] !== 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     };
 
     /** Test if the view corresponds to a matrix or not.
@@ -64,6 +97,15 @@ export default function informationExtension (MatrixView) {
     * @memberof MatrixView
     */
     MatrixView.prototype.ismatrix = function () {
-        return this.getSize().length === 2;
+        const size = this.getSize();
+        if (size.length > 2) {
+            let i, ie;
+            for (i = 2, ie = size.length; i < ie; i++) {
+                if (size[i] !== 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     };
 }
