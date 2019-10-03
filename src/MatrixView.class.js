@@ -84,10 +84,12 @@ export default function MatrixView(arg) {
         indices = [];
         for (i = 0; i < ndims; i++) {
             first.push(view.getFirst(i));
-            step.push(view.getStep(i));
             size.push(view.getSize(i));
             if (view.isIndicesIndexed(i)) {
                 indices.push(view.getIndices(i));
+                step.push(undefined);
+            } else {
+                step.push(view.getStep(i));
             }
         }
         return this;
