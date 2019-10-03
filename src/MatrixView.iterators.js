@@ -147,7 +147,7 @@ function SubIterator (first, step, end) {
         return (index === stop);
     };
     this.getPosition = function () {
-        return (index - start) / step;
+        return (index - start) / step | 0;
     };
     this.getIndex = function () {
         return index;
@@ -226,7 +226,7 @@ function Iterator (view, dim) {
         } else {
             start = 0;
         }
-        pos[0] = (index - start - first) / step;
+        pos[0] = (index - start - first) / step | 0;
         for (i = dim + 1, ie = it.length; i < ie; i++) {
             pos[i - dim] = it[i].getPosition();
         }
