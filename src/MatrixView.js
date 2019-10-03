@@ -34,6 +34,3 @@ informationExtension(MatrixView);
 
 import manipulationExtension from "./MatrixView.manipulation.js";
 manipulationExtension(MatrixView);
-
-import testExtension from "../test/MatrixView.test_functions.js";
-testExtension(MatrixView);
