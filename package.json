@@ -20,12 +20,15 @@
     },
     "homepage": "https://github.com/Etsitpab/MatrixView#readme",
     "scripts": {
-        "test": "jest --coverage"
+        "test": "jest --coverage",
+        "doc": "./node_modules/.bin/esdoc"
     },
     "devDependencies": {
         "@babel/core": "^7.5.5",
         "@babel/preset-env": "^7.5.5",
         "babel-jest": "^24.9.0",
+        "esdoc": "^1.1.0",
+        "esdoc-standard-plugin": "^1.0.0",
         "jest": "^24.9.0"
     },
     "dependencies": {
