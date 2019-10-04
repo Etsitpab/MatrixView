@@ -55,7 +55,7 @@ export default class MatrixView {
         const initial = {};   // backup of the original View
 
         // Initialization from size
-        const setFromSize = sizeIn => {
+        this._setFromSize = sizeIn => {
             size = Check.checkSize(sizeIn);
             indices = [];
 
@@ -76,7 +76,7 @@ export default class MatrixView {
         };
 
         // Copy constructor
-        const setFromView = view => {
+        this._setFromView = view => {
             first = [];
             step = [];
             size = [];
@@ -139,7 +139,7 @@ export default class MatrixView {
         this.restore = () => {
             const v = views.pop();
             if (Check.isSet(v)) {
-                setFromView(v);
+                this._setFromView(v);
             } else {
                 first = initial.first.slice();
                 step  = initial.step.slice();
@@ -167,7 +167,7 @@ export default class MatrixView {
          *
          * @todo rename
          */
-        const getDimLength = () => size.length;
+        this.getDimLength = () => size.length;
 
         /** Get the number of elements indexed by the View.
          *
@@ -182,9 +182,9 @@ export default class MatrixView {
          *
          * @todo length vs. numel
          */
-        const getLength = () => {
+        this.getLength = () => {
             let i, nel;
-            const ie = getDimLength();
+            const ie = this.getDimLength();
             for (i = 0, nel = 1; i < ie; i++) {
                 nel *= size[i];
             }
@@ -213,7 +213,7 @@ export default class MatrixView {
          *  + If `dimension` is given: number of elements along the specified dimension.
          *  + If no `dimension`: array containng the number of element along each dimension.
          */
-        const getSize = d => {
+        this.getSize = d => {
             if (!Check.isSet(d)) {
                 return size.slice();
             }
@@ -243,7 +243,7 @@ export default class MatrixView {
          * @return {Boolean}
          *  True iff the given dimension is indexed by indices.
          */
-        const isIndicesIndexed = d => {
+        this.isIndicesIndexed = d => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.isIndicesIndexed: invalid dimension.');
             }
@@ -271,11 +271,11 @@ export default class MatrixView {
          *
          * @todo check the example [0, 4, 2]
          */
-        const getIndices = d => {
+        this.getIndices = d => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.getIndices: invalid dimension.');
             }
-            if (!isIndicesIndexed(d)) {
+            if (!this.isIndicesIndexed(d)) {
                 throw new Error('MatrixView.getIndices: ' +
                                 'dimension isn\'t indexed by indices.');
             }
@@ -285,7 +285,7 @@ export default class MatrixView {
         /** If indexed by indices: get the steps to be used to explore the array.
          *
          * See also:
-         *  {@link MatrixView#isIndicesIndexed},
+         *  {@link MatrixView#this.isIndicesIndexed},
          *  {@link MatrixView#getIndices}.
          *
          * @example
@@ -305,11 +305,11 @@ export default class MatrixView {
          *
          * @todo check the example; return NaN as last?
          */
-        const getSteps = d => {
+        this.getSteps = d => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.getSteps: invalid dimension.');
             }
-            if (!isIndicesIndexed(d)) {
+            if (!this.isIndicesIndexed(d)) {
                 throw new Error('MatrixView.getSteps: ' +
                                 'Dimension isn\'t indexed with indices.');
             }
@@ -348,7 +348,7 @@ export default class MatrixView {
          *
          * @todo rename?
          */
-        const getInitialLength = () => {
+        this.getInitialLength = () => {
             let i, nel;
             const ie = initial.size.length;
             for (i = 0, nel = 1; i < ie; i++) {
@@ -376,7 +376,7 @@ export default class MatrixView {
          * @return {Array}
          *
          */
-        const getInitialSize = () => initial.size.slice();
+        this.getInitialSize = () => initial.size.slice();
 
         /** Convert a ND-indice into a linear indice.
          *
@@ -395,8 +395,8 @@ export default class MatrixView {
          *
          * @todo useful for a View (we don't know the size)? What if indices-indexed?
          */
-        const getIndex = coordinates => {
-            const ndims = getDimLength();
+        this.getIndex = coordinates => {
+            const ndims = this.getDimLength();
             const l = coordinates.length;
             if (l > 1 && l !== ndims) {
                 throw new Error('MatrixView.getIndex: invalid ND-index.');
@@ -435,7 +435,7 @@ export default class MatrixView {
          *
          * @todo what if indices-indexed?
          */
-        const getFirst = d => {
+        this.getFirst = d => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.getFirst: invalid dimension.');
             }
@@ -467,11 +467,11 @@ export default class MatrixView {
          *  Indices step between 2 values.
          *
          */
-        const getStep = d => {
+        this.getStep = d => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.getStep: invalid dimension.');
             }
-            if (isIndicesIndexed(d)) {
+            if (this.isIndicesIndexed(d)) {
                 throw new Error('MatrixView.getStep: dimension is indexed by indices.');
             }
             return Check.isSet(step[d]) ? step[d] : 1;
@@ -501,30 +501,16 @@ export default class MatrixView {
          *
          * @todo indice-indexed case (now return -Inf)?
          */
-        const getEnd = d => {
+        this.getEnd = d => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.getEnd: invalid dimension.');
             }
-            if (isIndicesIndexed(d)) {
+            if (this.isIndicesIndexed(d)) {
                 return -1;
             }
             const s = Check.isSet(size[d]) ? size[d] : 1;
             return (first[d] || 0) + s * (step[d] || 1);
         };
-
-        this.getDimLength     = getDimLength;
-        this.getLength        = getLength;
-        this.getInitialLength = getInitialLength;
-        this.getInitialSize   = getInitialSize;
-
-        this.getIndex = getIndex;
-        this.getFirst = getFirst;
-        this.getStep = getStep;
-        this.getSteps = getSteps;
-        this.getEnd = getEnd;
-        this.getSize = getSize;
-        this.isIndicesIndexed = isIndicesIndexed;
-        this.getIndices = getIndices;
 
 
         //////////////////////////////////////////////////////////////////
@@ -541,7 +527,7 @@ export default class MatrixView {
          *
          * @todo Other name (in matrix)? Not private? Remove?
          */
-        const pushSingletonDimensions = n => {
+        this._pushSingletonDimensions = n => {
             if (!Check.isInteger(n, 0)) {
                 throw new Error('MatrixView.pushSingletonDimensions: invalid dimension.');
             }
@@ -591,14 +577,14 @@ export default class MatrixView {
          *
          * @chainable
          */
-        const selectDimension = (d, sel) => {
+        this.selectDimension = (d, sel) => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.select: invalid dimension.');
             }
-            sel = Check.checkColon(sel, getSize(d));
-            if (!isIndicesIndexed(d)) {
-                first[d] = getFirst(d) + sel[0] * getStep(d);
-                step[d] = getStep(d) * sel[1];
+            sel = Check.checkColon(sel, this.getSize(d));
+            if (!this.isIndicesIndexed(d)) {
+                first[d] = this.getFirst(d) + sel[0] * this.getStep(d);
+                step[d] = this.getStep(d) * sel[1];
                 size[d] = Math.floor(Math.abs((sel[2] - sel[0]) / sel[1])) + 1;
             } else {
                 const ind = indices[d], indOut = [];
@@ -643,22 +629,22 @@ export default class MatrixView {
          *
          * @chainable
          */
-        const selectIndicesDimension = (d, ind) => {
+        this.selectIndicesDimension = (d, ind) => {
 
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.selectIndicesDimension: Dimension ' +
                                 'must be a positive integer.');
             }
 
-            if (!Check.isArrayOfIntegers(ind, 0, getSize(d) - 1)) {
+            if (!Check.isArrayOfIntegers(ind, 0, this.getSize(d) - 1)) {
                 throw new Error('MatrixView.selectIndicesDimension: Invalid index.');
             }
             ind = Array.prototype.slice.apply(ind);
 
             const ie = ind.length;
             let i;
-            if (!isIndicesIndexed(d)) {
-                const f = getFirst(d), dx = getStep(d);
+            if (!this.isIndicesIndexed(d)) {
+                const f = this.getFirst(d), dx = this.getStep(d);
                 for (i = 0; i < ie; i++) {
                     ind[i] *= dx;
                     ind[i] += f;
@@ -694,11 +680,11 @@ export default class MatrixView {
          *
          * @chainable
          */
-        const selectBooleanDimension = (d, boolInd) => {
+        this.selectBooleanDimension = (d, boolInd) => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.selectBooleanDimension: invalid dimension.');
             }
-            if (boolInd.length !== getSize(d)) {
+            if (boolInd.length !== this.getSize(d)) {
                 throw new Error('MatrixView.selectBooleanDimension: array dimensions mismatch.');
             }
 
@@ -740,8 +726,8 @@ export default class MatrixView {
          *
          * @chainable
          */
-        const swapDimensions = (dimA, dimB) => {
-            const ndims = getDimLength();
+        this.swapDimensions = (dimA, dimB) => {
+            const ndims = this.getDimLength();
             if (!Check.isInteger(dimA, 0)) {
                 throw new Error('MatrixView.swapDimensions: invalid dimensions.');
             }
@@ -751,7 +737,7 @@ export default class MatrixView {
 
             const n = Math.max(dimA, dimB) + 1 - ndims;
             if (n > 0) {
-                pushSingletonDimensions(n);
+                this._pushSingletonDimensions(n);
             }
             swap(first, dimA, dimB);
             swap(step, dimA, dimB);
@@ -785,7 +771,7 @@ export default class MatrixView {
          *
          * @chainable
          */
-        const shiftDimension = n => {
+        this.shiftDimension = n => {
             let i;
             if (!Check.isSet(n)) {
                 for (i = 0; size.length > 0 && size[0] === 1; i++) {
@@ -794,13 +780,13 @@ export default class MatrixView {
                     size.shift();
                 }
                 // TODO: allow it?
-                if (getDimLength() === 1) {
+                if (this.getDimLength() === 1) {
                     first.push(0);
                     step.push(1);
                     size.push(1);
                 }
             } else {
-                const ndims = getDimLength();
+                const ndims = this.getDimLength();
                 if (!Check.isInteger(n, 1 - ndims, ndims - 1)) {
                     throw new Error('MatrixView.shiftDimension: invalid shift.');
                 }
@@ -818,12 +804,6 @@ export default class MatrixView {
             return this;
         };
 
-        this.selectDimension         = selectDimension;
-        this.selectIndicesDimension  = selectIndicesDimension;
-        this.selectBooleanDimension  = selectBooleanDimension;
-        this.swapDimensions          = swapDimensions;
-        this.shiftDimension          = shiftDimension;
-
 
         //////////////////////////////////////////////////////////////////
         //                          Constructor                         //
@@ -831,12 +811,12 @@ export default class MatrixView {
 
         // New view constructor
         if (Check.isArrayLike(arg)) {
-            return setFromSize(arg);
+            return this._setFromSize(arg);
         }
 
         // Copy constructor
         if (arg instanceof MatrixView) {
-            setFromView(arg);
+            this._setFromView(arg);
             initial.first = first.slice();
             initial.step = step.slice();
             initial.size = size.slice();
