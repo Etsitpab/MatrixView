@@ -116,10 +116,10 @@ export class Iterator {
 * @private
 */
 export class SubIteratorIndices {
-    constructor(indices, step = 1, offset = 0) {
+    constructor(indices, offset = 0) {
         let index, stepIndex, stop;
         const first = indices[0];
-        const steps = SubIteratorIndices.getSteps(indices, step);
+        const steps = SubIteratorIndices.getSteps(indices);
         this.iterator = () => index += steps[++stepIndex];
         this.begin = (off = offset) => {
             stepIndex = 0;
@@ -140,15 +140,13 @@ export class SubIteratorIndices {
         };
     }
 
-    static getSteps(indices, step) {
-        let l = indices.length;
-        const steps = indices.slice();
+    static getSteps(indices) {
+        const l = indices.length, steps = indices.slice();
         for (let i = l - 1; i > 0; i--) {
             steps[i] -= steps[i - 1];
-            steps[i] *= step;
         }
         steps[0] = 0;
-        steps.push(-indices[l - 1] * step - 1);
+        steps.push(-indices[l - 1] - 1);
         return steps;
     }
 }

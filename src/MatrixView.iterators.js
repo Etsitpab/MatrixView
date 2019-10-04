@@ -75,7 +75,7 @@ export default function iteratorsExtension (MatrixView) {
         }
 
         if (this.isIndicesIndexed(dim)) {
-            return new SubIteratorIndices(this.getIndices(dim), 1, offset);
+            return new SubIteratorIndices(this.getIndices(dim), offset);
         }
         const first = this.getFirst(dim);
         const step = this.getStep(dim);
