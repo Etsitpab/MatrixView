@@ -368,12 +368,13 @@ describe("MatrixxView First test section", () => {
 
         iteratorTests(view, result);
         {
-            const {iterator: it, begin: b, end: e, getPosition} = view.getIterator(0);
+            const {iterator: it, begin: b, end: e, getPosition, isEnd} = view.getIterator(0);
             const positions = [];
             let i, ie;
             for (i = b(), ie = e(); i !== ie; i = it()) {
                 positions.push(getPosition(i));
             }
+            expect(isEnd()).toBe(true);
             expect(positions).toEqual(resultPositions);
         }
         view.restore().select([[0, 1, 2, 3, 4]], [[0, 1, 2, 3, 4]]);
@@ -389,12 +390,13 @@ describe("MatrixxView First test section", () => {
         view.restore().select([true, true, true, true, true], []);
         iteratorTests(view, result);
         {
-            const {iterator: it, begin: b, end: e, getPosition} = view.getIterator(0);
+            const {iterator: it, begin: b, end: e, getPosition, isEnd} = view.getIterator(0);
             const positions = [];
             let i, ie;
             for (i = b(), ie = e(); i !== ie; i = it()) {
                 positions.push(getPosition(i));
             }
+            expect(isEnd()).toBe(true);
             expect(positions).toEqual(resultPositions);
         }
 
