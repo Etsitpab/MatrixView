@@ -16,10 +16,8 @@ export class SubIterator {
         this.isEnd = () => index === stop;
         this.getPosition = () => (index - start) / step | 0;
         this.getIndex = () => index;
-        this[Symbol.iterator] = function* () {
-            let stop  = offset + end,
-                index = offset + first,
-                s = step;
+        this[Symbol.iterator] = function* (off = offset) {
+            let stop  = off + end, index = off + first, s = step;
             while (index !== stop) {
                 yield index;
                 index += s;
@@ -130,9 +128,9 @@ export class SubIteratorIndices {
         this.isEnd = () => index === stop;
         this.getPosition = () => stepIndex;
         this.getIndex = () => index;
-        this[Symbol.iterator] = function* () {
-            let stepIndex = 0, index = offset + first;
-            const stop = offset - 1;
+        this[Symbol.iterator] = function* (off = offset) {
+            const stop = off - 1;
+            let stepIndex = 0, index = off + first;
             while (index !== stop) {
                 yield index;
                 index += steps[++stepIndex];
