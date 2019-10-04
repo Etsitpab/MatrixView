@@ -23,7 +23,6 @@ export class SubIterator {
                 index += s;
             }
         };
-        this.display = () => console.log("start:", start, "stop:", stop, "index:", index);
     }
 }
 
@@ -38,6 +37,7 @@ export class SubIterator {
 *  First dimension to iterate on.
 */
 export class Iterator {
+
     constructor(view, dim) {
         let first, step, end, dimLength, it, index, stop;
         // Subiterators on upper dimensions
@@ -45,7 +45,8 @@ export class Iterator {
             if (d >= dimLength) {
                 return -1;
             }
-            let i = it[d], val = i.iterator();
+            const i = it[d];
+            let val = i.iterator();
             if (i.isEnd()) {
                 val = iterateDim(d + 1);
                 return (val !== -1) ? i.begin(val) : -1;
@@ -55,7 +56,7 @@ export class Iterator {
         this.iterator = () => {
             index += step;
             if (index === stop) {
-                let val = iterateDim(dim + 1);
+                const val = iterateDim(dim + 1);
                 index = (val === -1) ? -1 : val + first;
                 stop = val + end;
             }
@@ -67,7 +68,7 @@ export class Iterator {
                 yield index;
                 index += step;
                 if (index === stop) {
-                    let val = iterateDim(dim + 1);
+                    const val = iterateDim(dim + 1);
                     index = (val === -1) ? -1 : val + first;
                     stop = val + end;
                 }
@@ -94,7 +95,8 @@ export class Iterator {
         this.isEnd = () => index === -1;
         this.end = () => -1;
         this.getPosition = () => {
-            let pos = [], start;
+            const pos = [];
+            let start;
             if (it[dim + 1]) {
                 start = it[dim + 1].getIndex();
             } else {
@@ -162,6 +164,7 @@ export class SubIteratorIndices {
 *  First dimension to iterate on.
 */
 export class IteratorIndices {
+
     constructor(view, dim) {
         const indices = view.getIndices(dim),
             steps = view.getSteps(dim);
@@ -217,7 +220,7 @@ export class IteratorIndices {
             it = new Array(dimLength);
             for (let i = dimLength - 1, begin; i > dim; i--) {
                 it[i] = view.getSubIterator(i);
-                begin = it[i].begin(begin || 0);
+                begin = it[i].begin(begin);
             }
             subIndex = 0;
             index = 0;
@@ -239,6 +242,6 @@ export class IteratorIndices {
             }
             return pos;
         };
-
     }
+
 }
