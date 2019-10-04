@@ -429,9 +429,11 @@ Check.checkSizeEquals = function (sizeA, sizeB, ignoreTrailingDims = true) {
     if (!eq) {
         // Might be used to give more feedback.
         if (!ignoreTrailingDims) {
-            throw new Error("checkSizeEquals: " +
-            "dimensions differ by trailing 1's, ",
-            "and ignoreTrailingDims is False.");
+            throw new Error(
+                "checkSizeEquals: " +
+                "dimensions differ by trailing 1's, " +
+                "and ignoreTrailingDims is False."
+            );
         }
         throw new Error("checkSizeEquals: dimensions must be equals.");
     }
@@ -645,5 +647,5 @@ Check.getTypeConstructor = function (type) {
                 throw new Error("getTypeConstructor: Type must be a valid numeric class name.");
         }
     }
-    throw new Error("getTypeConstructor: Wrong data type argument:", type);
+    throw new Error("getTypeConstructor: Wrong data type argument:" + type);
 };
