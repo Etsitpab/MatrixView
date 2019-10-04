@@ -43,7 +43,7 @@ export class Iterator {
     constructor(view, dim) {
         let first, step, end, dimLength, it, index, stop;
         // Subiterators on upper dimensions
-        let iterateDim = d => {
+        const iterateDim = d => {
             if (d >= dimLength) {
                 return -1;
             }
@@ -65,7 +65,7 @@ export class Iterator {
         };
         this[Symbol.iterator] = function* () {
             let index = this.begin();
-            while (index === -1) {
+            while (index !== -1) {
                 yield index;
                 index += step;
                 if (index === stop) {
@@ -117,8 +117,9 @@ export class Iterator {
 */
 export class SubIteratorIndices {
     constructor(indices, step = 1, offset = 0) {
-        let first = indices[0], index, stepIndex, stop;
-        let steps = SubIteratorIndices.getSteps(indices, step);
+        let index, stepIndex, stop;
+        const first = indices[0];
+        const steps = SubIteratorIndices.getSteps(indices, step);
         this.iterator = () => index += steps[++stepIndex];
         this.begin = (off = offset) => {
             stepIndex = 0;
@@ -130,8 +131,8 @@ export class SubIteratorIndices {
         this.getPosition = () => stepIndex;
         this.getIndex = () => index;
         this[Symbol.iterator] = function* () {
-            let stepIndex = 0,
-                index = offset + first;
+            let stepIndex = 0, index = offset + first;
+            const stop = offset - 1;
             while (index !== stop) {
                 yield index;
                 index += steps[++stepIndex];
@@ -141,7 +142,7 @@ export class SubIteratorIndices {
 
     static getSteps(indices, step) {
         let l = indices.length;
-        let steps = indices.slice();
+        const steps = indices.slice();
         for (let i = l - 1; i > 0; i--) {
             steps[i] -= steps[i - 1];
             steps[i] *= step;
@@ -164,13 +165,13 @@ export class SubIteratorIndices {
 */
 export class IteratorIndices {
     constructor(view, dim) {
-        let indices = view.getIndices(dim),
+        const indices = view.getIndices(dim),
             steps = view.getSteps(dim);
 
         let index, subIndex, first, stop, dimLength, it;
         // For View indiexed by indices
-        let iterateDim = d => {
-            let i = it[d];
+        const iterateDim = d => {
+            const i = it[d];
             if (!i) {
                 return -1;
             }
@@ -185,7 +186,7 @@ export class IteratorIndices {
         this.iterator = () => {
             subIndex++;
             if (subIndex === stop) {
-                let val = iterateDim(dim + 1);
+                const val = iterateDim(dim + 1);
                 if (val === -1) {
                     return (index = -1);
                 }
@@ -194,6 +195,22 @@ export class IteratorIndices {
             }
             index += steps[subIndex];
             return index;
+        };
+        this[Symbol.iterator] = function* () {
+            let index = this.begin();
+            while (index !== -1) {
+                yield index;
+                subIndex++;
+                if (subIndex === stop) {
+                    const val = iterateDim(dim + 1);
+                    if (val === -1) {
+                        return;
+                    }
+                    index = val + first;
+                    subIndex = 0;
+                }
+                index += steps[subIndex];
+            }
         };
         /** Return the first index. */
         this.begin = () => {
@@ -218,7 +235,7 @@ export class IteratorIndices {
         this.end = () => -1;
         /** Return the position of the iterator. */
         this.getPosition = () => {
-            let pos = [subIndex];
+            const pos = [subIndex];
             for (let i = dim + 1, ie = it.length; i < ie; i++) {
                 pos[i - dim] = it[i].getPosition();
             }

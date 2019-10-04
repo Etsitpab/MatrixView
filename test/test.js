@@ -372,7 +372,7 @@ describe("MatrixxView First test section", () => {
                 [ 0, 4 ], [ 1, 4 ], [ 2, 4 ], [ 3, 4 ], [ 4, 4 ]
             ]);
         }
-
+        
         result.reverse();
 
         view.restore().select([-1, -1, 0], [-1, -1, 0]);
@@ -508,6 +508,9 @@ describe("MatrixxView First test section", () => {
 });
 
 const iteratorTests = function (view, result) {
+    expect(iterator_test_0_1(view)).toEqual(result);
+    expect(iterator_test_0_2(view)).toEqual(result);
+
     expect(iterator_test_1_1(view)).toEqual(result);
     expect(iterator_test_1_2(view)).toEqual(result);
     expect(iterator_test_1_3(view)).toEqual(result);
@@ -515,6 +518,30 @@ const iteratorTests = function (view, result) {
     expect(iterator_test_2_1(view)).toEqual(result);
     expect(iterator_test_2_2(view)).toEqual(result);
     expect(iterator_test_2_3(view)).toEqual(result);
+};
+
+// 0.1
+
+const iterator_test_0_1 = (view, indices = []) => {
+    // Iterator to scan the view
+    let i;
+    for (i of view.getIterator(0)) {
+        indices.push(i);
+    }
+    return indices;
+};
+
+// 0.2
+
+const iterator_test_0_2 = (view, indices = []) => {
+    let i, y;
+    for (i of view.getIterator(1)) {
+        for (y of view.getSubIterator(0, i)) {
+            indices.push(y);
+        }
+    }
+
+    return indices;
 };
 
 // 1.1 - Simplest way to scan the view

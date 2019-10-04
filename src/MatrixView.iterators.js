@@ -1,5 +1,5 @@
-import Check from "./Check.object";
-import {Iterator, IteratorIndices, SubIterator, SubIteratorIndices} from "./Iterators.class";
+import Check from "./Check.object.js";
+import {Iterator, IteratorIndices, SubIterator, SubIteratorIndices} from "./Iterators.class.js";
 export default function iteratorsExtension (MatrixView) {
 
     /** @class MatrixView */
@@ -30,19 +30,16 @@ export default function iteratorsExtension (MatrixView) {
      *
      * @todo redefine the spec; document all members.
      */
-    MatrixView.prototype.getIterator = function (dim) {
+    MatrixView.prototype.getIterator = function (dim = 0) {
         // Check parameter
-        if (!Check.isSet(dim)) {
-            dim = 0;
-        } else if (!Check.isInteger(dim, 0)) {
+        if (!Check.isInteger(dim, 0)) {
             throw new Error('MatrixView.getIterator: invalid dimension.');
         }
 
         if (this.isIndicesIndexed(dim)) {
             return new IteratorIndices(this, dim);
         }
-        var it = new Iterator(this, dim);
-        return it;
+        return new Iterator(this, dim);
     };
 
     /** Return an iterator over a given dimension of the View.
@@ -66,20 +63,23 @@ export default function iteratorsExtension (MatrixView) {
      * @param {Number} dim
      *  Dimension along which to iterate.
      *
+     * @param {Number} [offset=0]
+     *  offset to initialize from a ahigher iterator
+     *
      * @return {Function}
      */
-    MatrixView.prototype.getSubIterator = function (dim) {
+    MatrixView.prototype.getSubIterator = function (dim, offset = 0) {
         // Check parameter
         if (!Check.isInteger(dim, 0)) {
             throw new Error('MatrixView.getSubIterator: invalid dimension.');
         }
 
         if (this.isIndicesIndexed(dim)) {
-            return new SubIteratorIndices(this.getIndices(dim), 1);
+            return new SubIteratorIndices(this.getIndices(dim), 1, offset);
         }
-        var first = this.getFirst(dim);
-        var step = this.getStep(dim);
-        var end = this.getEnd(dim);
-        return new SubIterator(first, step, end);
+        const first = this.getFirst(dim);
+        const step = this.getStep(dim);
+        const end = this.getEnd(dim);
+        return new SubIterator(first, step, end, offset);
     };
 }
