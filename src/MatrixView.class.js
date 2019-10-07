@@ -739,10 +739,10 @@ export default class MatrixView {
             if (n > 0) {
                 this._pushSingletonDimensions(n);
             }
-            swap(first, dimA, dimB);
-            swap(step, dimA, dimB);
-            swap(size, dimA, dimB);
-            swap(indices, dimA, dimB);
+            [first[dimA], first[dimB]] = [first[dimB], first[dimA]];
+            [step[dimA], step[dimB]] = [step[dimB], step[dimA]];
+            [size[dimA], size[dimB]] = [size[dimB], size[dimA]];
+            [indices[dimA], indices[dimB]] = [indices[dimB], indices[dimA]];
 
             return this;
         };
@@ -828,9 +828,3 @@ export default class MatrixView {
     }
 
 }
-
-const swap = (tab, i, j) => {
-    const tmp = tab[i];
-    tab[i] = tab[j];
-    tab[j] = tmp;
-};
