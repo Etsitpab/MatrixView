@@ -1,5 +1,5 @@
 /* global describe test expect */
-import MatrixView, {Check} from "../src/MatrixView";
+import MatrixView, {Check} from "../src/MatrixView.js";
 import getLogger from "@etsitpab/logger";
 
 const logger = getLogger("MatrixView");
