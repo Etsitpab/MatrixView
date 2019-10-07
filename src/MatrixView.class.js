@@ -128,7 +128,7 @@ export default class MatrixView {
          *     v.flipdim(1).save();
          *
          *     // Select some elements
-         *     v.selectDimension(1, [0, 2, 4]);
+         *     v.selectDimByColon(1, [0, 2, 4]);
          *
          *     // Restore the previous view, and then the initial View
          *     v.restore();
@@ -226,13 +226,13 @@ export default class MatrixView {
         /** Test whether the view is indexed by indices.
          *
          * See also:
-         *  {@link MatrixView#selectIndicesDimension},
-         *  {@link MatrixView#selectDimension}.
+         *  {@link MatrixView#selectDimByIndices},
+         *  {@link MatrixView#selectDimByColon}.
          *
          * @example
          *     // Create a View, shuffle indices along the first dimension
          *     var v = new MatrixView([3, 4]);
-         *     v.selectIndicesDimension(0, [0, 2, 1]);
+         *     v.selectDimByIndices(0, [0, 2, 1]);
          *
          *     // Check which dimension is indexed by indices
          *     var test = v.isIndicesIndexed(0);    // test is: true
@@ -259,7 +259,7 @@ export default class MatrixView {
          * @example
          *     // Create a View and select indices along 2nd dim.
          *     var v = new MatrixView([2, 3]);
-         *     v.selectIndicesDimension(1, [0, 2, 1]);
+         *     v.selectDimByIndices(1, [0, 2, 1]);
          *
          *     // Retrieve the indices along dimension 1
          *     var indices = v.getIndices(1);       // indices is: [0, 4, 2]
@@ -291,7 +291,7 @@ export default class MatrixView {
          * @example
          *     // Create a View and select indices along 2nd dim.
          *     var v = new MatrixView([2, 3]);
-         *     v.selectIndicesDimension(1, [0, 2, 1]);
+         *     v.selectDimByIndices(1, [0, 2, 1]);
          *
          *     // Retrieve the steps along dimension 1
          *     var steps = v.getSteps(1);      // steps is: [0, 4, -2, -Infinity]
@@ -338,7 +338,7 @@ export default class MatrixView {
          *     var nel = v.getLength();    // nel is: 9
          *
          *     // Select some elements along dimension 1
-         *     v.selectIndicesDimension(1, [0, 2]);
+         *     v.selectDimByIndices(1, [0, 2]);
          *
          *     // Number of elements
          *     nel = v.getLength();        // nel is: 6
@@ -367,7 +367,7 @@ export default class MatrixView {
          *     var v = new MatrixView([3, 3]);
          *
          *     // Select some elements along dimension 1
-         *     v.selectIndicesDimension(1, [0, 2]);
+         *     v.selectDimByIndices(1, [0, 2]);
          *
          *     // Size
          *     var size = v.getSize();     // size is: [3, 2]
@@ -543,7 +543,7 @@ export default class MatrixView {
         /** Select slices of the View along a dimension.
          *
          * See also:
-         *  {@link MatrixView#selectIndicesDimension},
+         *  {@link MatrixView#selectDimByIndices},
          *  {@link MatrixView#swapDimensions},
          *  {@link MatrixView#shiftDimension}.
          *
@@ -552,7 +552,7 @@ export default class MatrixView {
          *     var v = new MatrixView([6, 4]);
          *
          *     // Along first dim., select one value out of 2, from #1 to #5
-         *     v.selectDimension(0, [1, 2, 5]);
+         *     v.selectDimByColon(0, [1, 2, 5]);
          *
          *     //  | 0  6 12 18 |
          *     //  | 1  7 13 19 |
@@ -577,7 +577,7 @@ export default class MatrixView {
          *
          * @chainable
          */
-        this.selectDimension = (d, sel) => {
+        this.selectDimByColon = (d, sel) => {
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.select: invalid dimension.');
             }
@@ -603,7 +603,7 @@ export default class MatrixView {
         /** Select slices of the View along a dimension, indexing by indices.
          *
          * See also:
-         *  {@link MatrixView#selectDimension},
+         *  {@link MatrixView#selectDimByColon},
          *  {@link MatrixView#swapDimensions},
          *  {@link MatrixView#shiftDimension}.
          *
@@ -612,7 +612,7 @@ export default class MatrixView {
          *     var v = new MatrixView([6, 4]);
          *
          *     // Along first dim, select slices of indices 4, 3, and 1
-         *     v.selectIndicesDimension(0, [4, 3, 1]);
+         *     v.selectDimByIndices(0, [4, 3, 1]);
          *
          *     //  | 0  6 12 18 |
          *     //  | 1  7 13 19 |
@@ -629,15 +629,15 @@ export default class MatrixView {
          *
          * @chainable
          */
-        this.selectIndicesDimension = (d, ind) => {
+        this.selectDimByIndices = (d, ind) => {
 
             if (!Check.isInteger(d, 0)) {
-                throw new Error('MatrixView.selectIndicesDimension: Dimension ' +
+                throw new Error('MatrixView.selectDimByIndices: Dimension ' +
                                 'must be a positive integer.');
             }
 
             if (!Check.isArrayOfIntegers(ind, 0, this.getSize(d) - 1)) {
-                throw new Error('MatrixView.selectIndicesDimension: Invalid index.');
+                throw new Error('MatrixView.selectDimByIndices: Invalid index.');
             }
             ind = Array.prototype.slice.apply(ind);
 
@@ -667,8 +667,8 @@ export default class MatrixView {
         /** Select slices of the View along a dimension, indexing by booleans.
          *
          * See also:
-         *  {@link MatrixView#selectDimension},
-         *  {@link MatrixView#selectIndicesDimension},
+         *  {@link MatrixView#selectDimByColon},
+         *  {@link MatrixView#selectDimByIndices},
          *  {@link MatrixView#swapDimensions},
          *  {@link MatrixView#shiftDimension}.
          *
@@ -680,12 +680,12 @@ export default class MatrixView {
          *
          * @chainable
          */
-        this.selectBooleanDimension = (d, boolInd) => {
+        this.selectDimByBooleans = (d, boolInd) => {
             if (!Check.isInteger(d, 0)) {
-                throw new Error('MatrixView.selectBooleanDimension: invalid dimension.');
+                throw new Error('MatrixView.selectDimByBooleans: invalid dimension.');
             }
             if (boolInd.length !== this.getSize(d)) {
-                throw new Error('MatrixView.selectBooleanDimension: array dimensions mismatch.');
+                throw new Error('MatrixView.selectDimByBooleans: array dimensions mismatch.');
             }
 
             const ei = boolInd.length, ind = new Array(boolInd.length);
@@ -696,7 +696,7 @@ export default class MatrixView {
                     o += 1;
                 }
             }
-            return this.selectIndicesDimension(d, ind.slice(0, o));
+            return this.selectDimByIndices(d, ind.slice(0, o));
         };
 
         /** Swap (transpose) 2 dimensions.
