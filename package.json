@@ -1,5 +1,5 @@
 {
-    "name": "matrixview",
+    "name": "@etsitpab/matrixview",
     "version": "1.0.0",
     "description": "This package provides a class to manipulate multidimensionnal arrays.",
     "main": "index.js",

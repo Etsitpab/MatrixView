@@ -60,19 +60,19 @@ describe("MatrixxView First test section", () => {
 
     test("MatrixView getInitialSize", () => {
         const v = new MatrixView([5, 5]);
-        v.selectIndicesDimension(0, [1, 3, 4]);
-        v.selectDimension(0, [0, 2, -1]);
-        v.selectIndicesDimension(1, [2]);
+        v.selectDimByIndices(0, [1, 3, 4]);
+        v.selectDimByColon(0, [0, 2, -1]);
+        v.selectDimByIndices(1, [2]);
         expect(v.getInitialSize()).toEqual([5, 5]);
     });
 
     test("MatrixView save / restore", () => {
         const v = new MatrixView([5, 5]);
-        v.selectIndicesDimension(0, [1, 3, 4]);
+        v.selectDimByIndices(0, [1, 3, 4]);
         expect(v.getSize()).toEqual([3, 5]);
         v.save();
-        v.selectDimension(0, [0, 2, -1]);
-        v.selectIndicesDimension(1, [2]);
+        v.selectDimByColon(0, [0, 2, -1]);
+        v.selectDimByIndices(1, [2]);
         expect(v.getSize()).toEqual([2, 1]);
         v.restore();
         expect(v.getSize()).toEqual([3, 5]);
@@ -80,7 +80,7 @@ describe("MatrixxView First test section", () => {
         expect(v.getSize()).toEqual([5, 5]);
     });
 
-    test("MatrixView selectDimension", () => {
+    test("MatrixView selectDimByColon", () => {
         const v = new MatrixView([5, 5]);
         const data = [
              0,  1,  2,  3,  4,
@@ -90,11 +90,11 @@ describe("MatrixxView First test section", () => {
             20, 21, 22, 23, 24
         ];
         {
-            v.selectIndicesDimension(0, [1, 3, 4]);
-            v.selectDimension(0, [0, 2, -1]);
-            // v.selectIndicesDimension(1, [1, 2, 3, 4]);
-            // v.selectIndicesDimension(1, [1]);
-            v.selectIndicesDimension(1, [2]);
+            v.selectDimByIndices(0, [1, 3, 4]);
+            v.selectDimByColon(0, [0, 2, -1]);
+            // v.selectDimByIndices(1, [1, 2, 3, 4]);
+            // v.selectDimByIndices(1, [1]);
+            v.selectDimByIndices(1, [2]);
             let out = new Array(v.getLength());
             v.extractFrom(data, out);
             expect(out).toEqual([11, 14]);
@@ -111,16 +111,16 @@ describe("MatrixxView First test section", () => {
             20, 21, 22, 23, 24
         ];
         {
-            v.selectIndicesDimension(0, [1, 3, 4]);
-            v.selectIndicesDimension(1, [2]);
+            v.selectDimByIndices(0, [1, 3, 4]);
+            v.selectDimByIndices(1, [2]);
             let out = new Array(v.getLength());
             v.extractFrom(data, out);
             expect(out).toEqual([11, 13, 14]);
         }
         v.restore();
         {
-            v.selectDimension(0, [1, 2, 4]);
-            v.selectDimension(1, [3]);
+            v.selectDimByColon(0, [1, 2, 4]);
+            v.selectDimByColon(1, [3]);
             let out = v.extractFrom(data);
             expect(out).toEqual([16, 18]);
         }
@@ -129,8 +129,8 @@ describe("MatrixxView First test section", () => {
     test("MatrixView extractTo", () => {
         const v = new MatrixView([5, 5]);
         {
-            v.selectIndicesDimension(0, [1, 3, 4]);
-            v.selectIndicesDimension(1, [2]);
+            v.selectDimByIndices(0, [1, 3, 4]);
+            v.selectDimByIndices(1, [2]);
             const out = new Uint8Array(25);
             v.extractTo([1, 2, 3], out);
 
@@ -144,8 +144,8 @@ describe("MatrixxView First test section", () => {
         }
         v.restore();
         {
-            v.selectDimension(0, [1, 2, 4]);
-            v.selectDimension(1, [3]);
+            v.selectDimByColon(0, [1, 2, 4]);
+            v.selectDimByColon(1, [3]);
             const out = new Uint8Array(25);
             v.extractTo([4, 4], out);
             expect(out).toEqual(Uint8Array.from([
@@ -158,8 +158,8 @@ describe("MatrixxView First test section", () => {
         }
         v.restore();
         {
-            v.selectDimension(0, [2, 4]);
-            v.selectDimension(1, 3);
+            v.selectDimByColon(0, [2, 4]);
+            v.selectDimByColon(1, 3);
             const out = new Uint8Array(25);
             v.extractTo(4, out);
             expect(out).toEqual(Uint8Array.from([
@@ -172,8 +172,8 @@ describe("MatrixxView First test section", () => {
         }
         v.restore();
         {
-            v.selectIndicesDimension(0, [2, 4]);
-            v.selectIndicesDimension(1, [3, 4]);
+            v.selectDimByIndices(0, [2, 4]);
+            v.selectDimByIndices(1, [3, 4]);
             const out = new Uint8Array(25);
             v.extractTo([4], out);
             expect(out).toEqual(Uint8Array.from([
@@ -197,10 +197,10 @@ describe("MatrixxView First test section", () => {
         ]);
         const vOut = new MatrixView([5, 5]);
         {
-            v.selectIndicesDimension(0, [1, 3, 4]);
-            v.selectIndicesDimension(1, [2]);
-            vOut.selectIndicesDimension(1, [1, 3, 4]);
-            vOut.selectIndicesDimension(0, [2]);
+            v.selectDimByIndices(0, [1, 3, 4]);
+            v.selectDimByIndices(1, [2]);
+            vOut.selectDimByIndices(1, [1, 3, 4]);
+            vOut.selectDimByIndices(0, [2]);
             let out = new Uint8Array(vOut.getInitialLength());
             v.extract(data, vOut, out);
             expect(out).toEqual(Uint8Array.from([

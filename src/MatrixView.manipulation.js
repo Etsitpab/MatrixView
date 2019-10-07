@@ -25,9 +25,9 @@ export default function manipulationExtension (MatrixView) {
     /** Allow to select an subpart of the MatrixView on each dimension.
     *
     * __Also see:__
-    * {@link MatrixView#selectIndicesDimension},
-    * {@link MatrixView#selectBooleanDimension},
-    * {@link MatrixView#selectDimension}.
+    * {@link MatrixView#selectDimByIndices},
+    * {@link MatrixView#selectDimByBooleans},
+    * {@link MatrixView#selectDimByColon}.
     *
     * @example
     *     // Create view
@@ -65,28 +65,28 @@ export default function manipulationExtension (MatrixView) {
     * @method select
     * @chainable
     */
-    MatrixView.prototype.select = function () {
-        var T = Check;
-        var i, ie;
-        for (i = 0, ie = arguments.length; i < ie; i++) {
-            var arg = arguments[i];
+    MatrixView.prototype.select = function (...args) {
+        let i;
+        const ie = args.length;
+        for (i = 0; i < ie; i++) {
+            var arg = args[i];
             // Arg is an array
-            if (T.isArrayLike(arg)) {
+            if (Check.isArrayLike(arg)) {
 
                 // Arg is an array containing an array [[<ind>]]
-                if (T.isArrayLike(arg[0])) {
-                    this.selectIndicesDimension(i, arg[0]);
+                if (Check.isArrayLike(arg[0])) {
+                    this.selectDimByIndices(i, arg[0]);
                     // Arg is a boolean array [<boolean>]
-                } else if (T.isArrayOfBooleans(arg)) {
-                    this.selectBooleanDimension(i, arg);
+                } else if (Check.isArrayOfBooleans(arg)) {
+                    this.selectDimByBooleans(i, arg);
                     // Arg is a colon operator but not [<start, step, end>]
                 } else if (arg.length !== 0) {
-                    this.selectDimension(i, arg);
+                    this.selectDimByColon(i, arg);
                 }
 
                 // Arg is just an integer <integer>
-            } else if (T.isInteger(arg)) {
-                this.selectDimension(i, arg);
+            } else if (Check.isInteger(arg)) {
+                this.selectDimByColon(i, arg);
                 // Otherwise
             } else {
                 throw new Error("MatrixView.select: Invalid selection.");
@@ -117,16 +117,16 @@ export default function manipulationExtension (MatrixView) {
     * @chainable
     */
     MatrixView.prototype.permute = function (dim) {
-        var errMsg = this.constructor.name + '.permute: ';
+        const errMsg = this.constructor.name + '.permute: ';
         if (dim.length < this.getDimLength()) {
             throw new Error(errMsg + 'Dimension permutation is invalid.');
         }
 
         dim = dim.slice();
-        var ndims = dim.length;
-        var i, ie, j;
+        const ndims = dim.length;
+        let i, j;
         for (i = 0; i < ndims; i++) {
-            var t = false;
+            let t = false;
             for (j = 0; j < ndims; j++) {
                 if (dim[j] === i) {
                     t = true;
@@ -138,10 +138,10 @@ export default function manipulationExtension (MatrixView) {
         }
 
         // Reorder the view
-        for (i = 0, ie = ndims; i < ie; i++) {
+        for (i = 0; i < ndims; i++) {
             j = i;
             while (true) {
-                var k = dim[j];
+                const k = dim[j];
                 dim[j] = j;
                 if (k === i) {
                     break;
@@ -177,17 +177,18 @@ export default function manipulationExtension (MatrixView) {
     */
     MatrixView.prototype.ipermute = function (dim) {
         // Create a dim indices Array
-        var i, ie, indices = [];
-        for (i = 0, ie = dim.length; i < ie; i++) {
+        let i;
+        const ie = dim.length, indices = [];
+        for (i = 0; i < ie; i++) {
             indices[i] = i;
         }
 
         // Get dim sorted indices.
-        var f = function (a, b) {
+        const f = function (a, b) {
             return dim[a] - dim[b];
         };
-
-        return this.permute(indices.sort(f));
+        indices.sort(f);
+        return this.permute(indices);
     };
 
     /** Rotates MatrixView counterclockwise by a multiple of 90 degrees.
@@ -240,7 +241,7 @@ export default function manipulationExtension (MatrixView) {
     * @chainable
     */
     MatrixView.prototype.flipdim = function (d) {
-        return this.selectDimension(d, [-1, 0]);
+        return this.selectDimByColon(d, [-1, 0]);
     };
 
     /** Flip matrix left to right.
@@ -296,29 +297,31 @@ export default function manipulationExtension (MatrixView) {
     * @method circshift
     * @chainable
     */
-    (function () {
-        var selectDim = function (v, k, dim) {
-            var size = v.getSize(dim), sel = new Array(size);
+    {
+        const selectDim = function (v, k, dim) {
+            const size = v.getSize(dim), sel = new Array(size);
             k %= size;
-            var start = k > 0 ? size - k : -k;
-            var end = k > 0 ? k : size + k;
-            var i, j;
+            const start = k > 0 ? size - k : -k;
+            const end = k > 0 ? k : size + k;
+            let i, j;
             for (i = start, j = 0; j < end; i++, j++) {
                 sel[j] = i;
             }
             for (i = 0, j = end; j < size; i++, j++) {
                 sel[j] = i;
             }
-            v.selectIndicesDimension(dim, sel);
+            v.selectDimByIndices(dim, sel);
         };
 
         MatrixView.prototype.circshift = function (K, dim) {
-            var errMsg = "MatrixView.circshift: Invalid arguments.";
+            const errMsg = "MatrixView.circshift: Invalid arguments.";
             if (Check.isArrayLike(K) && !Check.isSet(dim)) {
                 if (K.length > this.getDimLength()) {
                     throw new Error(errMsg);
                 }
-                for (var k = 0, ke = K.length; k < ke; k++) {
+                let k;
+                const ke = K.length;
+                for (k = 0; k < ke; k++) {
                     selectDim(this, K[k], k);
                 }
                 return this;
@@ -329,5 +332,5 @@ export default function manipulationExtension (MatrixView) {
             }
             throw new Error(errMsg);
         };
-    })();
+    }
 }

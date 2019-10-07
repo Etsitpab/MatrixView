@@ -1,5 +1,6 @@
 import Check from "./Check.object.js";
 import {Iterator, IteratorIndices, SubIterator, SubIteratorIndices} from "./Iterators.class.js";
+
 export default function iteratorsExtension (MatrixView) {
 
     /** @class MatrixView */
@@ -82,4 +83,5 @@ export default function iteratorsExtension (MatrixView) {
         const end = this.getEnd(dim);
         return new SubIterator(first, step, end, offset);
     };
+
 }

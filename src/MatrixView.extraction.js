@@ -25,19 +25,16 @@ export default function extractionExtension (MatrixView) {
 
         // Check arguments
         if (!Check.isArrayLike(dataOut)) {
-            throw new Error('MatrixView.extractTo: invalid output data.');
+            throw new Error('MatrixView.extractTo: Invalid output data.');
         }
         if (dataOut.length !== this.getInitialLength()) {
             throw new Error('MatrixView.extractTo: Output data length is invalid.');
         }
 
         // Input iterator
-        var iterator = this.getIterator(1);
-        var i, ie, it = iterator.iterator, b = iterator.begin, e = iterator.end;
-        var y, ye, fy = this.getFirst(0), ly = this.getEnd(0);
-        var steps, ny, dy, s;
-        var yo;
-
+        const {iterator: it, begin: b, end: e} = this.getIterator(1);
+        const fy = this.getFirst(0), ly = this.getEnd(0);
+        let i, ie, y, ye, yo;
         if (Check.isArrayLike(dataIn) && dataIn.length === this.getLength()) {
 
             // Copy an array
@@ -45,14 +42,16 @@ export default function extractionExtension (MatrixView) {
                 throw new Error('MatrixView.extractTo: cannot perform in-place extraction.');
             }
             if (this.isIndicesIndexed(0)) {
-                steps = this.getSteps(0);
+                const steps = this.getSteps(0);
+                let s;
                 for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
                     for (s = 0, y = i + fy, ye = i + ly; y !== ye; yo++, y += steps[++s]) {
                         dataOut[y] = dataIn[yo];
                     }
                 }
             } else {
-                dy = this.getStep(0);
+                const dy = this.getStep(0);
+                let ny;
                 for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
                     for (y = i + fy, ny = i + ly; y !== ny; y += dy, yo++) {
                         dataOut[y] = dataIn[yo];
@@ -67,14 +66,16 @@ export default function extractionExtension (MatrixView) {
                 dataIn = dataIn[0];
             }
             if (this.isIndicesIndexed(0)) {
-                steps = this.getSteps(0);
+                const steps = this.getSteps(0);
+                let s;
                 for (i = b(), ie = e(); i !== ie; i = it()) {
                     for (s = 0, y = i + fy, ye = i + ly; y !== ye; y += steps[++s]) {
                         dataOut[y] = dataIn;
                     }
                 }
             } else {
-                dy = this.getStep(0);
+                const dy = this.getStep(0);
+                let ny;
                 for (i = b(), ie = e(); i !== ie; i = it()) {
                     for (y = i + fy, ny = i + ly; y !== ny; y += dy) {
                         dataOut[y] = dataIn;
@@ -83,7 +84,7 @@ export default function extractionExtension (MatrixView) {
             }
 
         } else {
-            throw new Error('MatrixView.extractTo: invalid input length.');
+            throw new Error('MatrixView.extractTo: Invalid input data.');
         }
 
         return dataOut;
@@ -103,7 +104,7 @@ export default function extractionExtension (MatrixView) {
      *     var d = [0, 1, 2, 3, 4, 5, 6, 7, 8];
      *
      *     // Select third column
-     *     v.selectDimension(1, [2]);
+     *     v.selectDimByColon(1, [2]);
      *
      *     // Extract the associated data
      *     var out = v.extract(d);   // out is: [6, 7, 8]
@@ -128,7 +129,9 @@ export default function extractionExtension (MatrixView) {
         }
 
         // Check output array
-        dataOut = dataOut || new dataIn.constructor(this.getLength());
+        if (dataOut === undefined) {
+            dataOut = new dataIn.constructor(this.getLength());
+        }
         if (!Check.isArrayLike(dataOut)) {
             throw new Error('MatrixView.extractFrom: invalid output data.');
         }
@@ -140,21 +143,21 @@ export default function extractionExtension (MatrixView) {
         }
 
         // Input iterator
-        var iterator = this.getIterator(1);
-        var i, ie, it = iterator.iterator, b = iterator.begin, e = iterator.end;
-        var y, ye, fy = this.getFirst(0), ly = this.getEnd(0);
-        var yo;
+        const {iterator: it, begin:b, end: e} = this.getIterator(1);
+        const fy = this.getFirst(0), ly = this.getEnd(0);
+        let i, ie, y, ye, yo;
 
         // Perform copy
         if (this.isIndicesIndexed(0)) {
-            var steps = this.getSteps(0), s;
+            const steps = this.getSteps(0);
+            let s;
             for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
                 for (s = 0, y = i + fy, ye = i + ly; y !== ye; yo++, y += steps[++s]) {
                     dataOut[yo] = dataIn[y];
                 }
             }
         } else {
-            var dy = this.getStep(0);
+            const dy = this.getStep(0);
             for (i = b(), ie = e(), yo = 0; i !== ie; i = it()) {
                 for (y = i + fy, ye = i + ly; y !== ye; y += dy, yo++) {
                     dataOut[yo] = dataIn[y];
@@ -178,13 +181,13 @@ export default function extractionExtension (MatrixView) {
      *     var dIn = [0, 1, 2, 3, 4, 5, 6, 7, 8];
      *     var vIn = new MatrixView([3, 3]);
      *     // select third column: 6, 7, 8
-     *     vIn.selectDimension(1, [2]);
+     *     vIn.selectDimByColon(1, [2]);
      *
      *     // Create output View and data
      *     var dOut = [0, 1, 2, 3, 4, 5, 6, 7, 8];
      *     var vOut = new MatrixView([3, 3]);
      *     // select first row: 1, 3, 6
-     *     vOut.selectDimension(0, [0]);
+     *     vOut.selectDimByColon(0, [0]);
      *
      *     // Extract Data
      *     var out = vIn.extract(dIn, vOut, dOut);
@@ -238,4 +241,5 @@ export default function extractionExtension (MatrixView) {
         }
         return dataOut;
     };
+
 }
