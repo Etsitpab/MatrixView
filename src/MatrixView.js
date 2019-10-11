@@ -18,7 +18,6 @@
 
 import MatrixView from "./MatrixView.class.js";
 export default MatrixView;
-
 import Check from "./Check.object.js";
 export {Check};
 

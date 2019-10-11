@@ -4,7 +4,7 @@ import getLogger from "@etsitpab/logger";
 
 const logger = getLogger("MatrixView");
 
-describe("MatrixxView First test section", () => {
+describe("MatrixxView class test section", () => {
 
     test("MatrixView tests", () => {
         const size = [1, 2, 3, 4];
@@ -434,26 +434,41 @@ describe("MatrixxView First test section", () => {
 
     });
 
-    test("Check object test", () => {
+});
+
+describe("Check object test", () => {
+
+    test("isNumber test", () => {
         expect(Check.isNumber(3, 1, 3)).toBe(true);
         expect(Check.isNumber(-3, 1, 3)).toBe(false);
         expect(Check.isNumber(-Math.PI)).toBe(true);
         expect(Check.isNumber(NaN)).toBe(false);
         expect(Check.isNumber(true)).toBe(false);
         expect(Check.isNumber("3")).toBe(false);
+    });
 
+    test("isInteger test", () => {
         expect(Check.isInteger(3, 1, 3)).toBe(true);
         expect(Check.isInteger(-3, 1, 3)).toBe(false);
         expect(Check.isInteger(Math.PI, 1, 4)).toBe(false);
+    });
 
+    test("isBoolean test", () => {
         expect(Check.isBoolean(true)).toBe(true);
         expect(Check.isBoolean(1)).toBe(false);
         expect(Check.isBoolean("")).toBe(false);
+    });
 
+    test("isArrayLike test", () => {
         expect(Check.isArrayLike([])).toBe(true);
         expect(Check.isArrayLike("")).toBe(false);
         expect(Check.isArrayLike({0: 3, 1:2, 2: 3.14, length: 3})).toBe(true);
+        expect(Check.isArrayLike(new Float64Array(8))).toBe(true);
+        expect(Check.isArrayLike(null)).toBe(false);
+        expect(Check.isArrayLike(undefined)).toBe(false);
+    });
 
+    test("isArrayOfNumbers test", () => {
         expect(Check.isArrayOfNumbers([-1, 3.14, 5])).toBe(true);
         expect(Check.isArrayOfNumbers({0: 3, 1:2, 2: 3.14, length: 3})).toBe(true);
         expect(Check.isArrayOfNumbers([1, true, 2])).toBe(false);
@@ -461,7 +476,9 @@ describe("MatrixxView First test section", () => {
         expect(Check.isArrayOfNumbers([1, "", 2])).toBe(false);
         expect(Check.isArrayOfNumbers([1, NaN, 2])).toBe(false);
         expect(Check.isArrayOfNumbers([1, Infinity, 2])).toBe(true);
+    });
 
+    test("isArrayOfIntegers test", () => {
         expect(Check.isArrayOfIntegers([1, 2, -3])).toBe(true);
         expect(Check.isArrayOfIntegers([1, 2, -3], 1, 3)).toBe(false);
         expect(Check.isArrayOfIntegers([1, 2.2, -3])).toBe(false);
@@ -472,39 +489,46 @@ describe("MatrixxView First test section", () => {
         expect(Check.isArrayOfIntegers(Int16Array.from([-1, 2, 3]), -10, 10)).toBe(true);
         expect(Check.isArrayOfIntegers(Int8Array.from([-1, 2, 3]), 1, 3)).toBe(false);
         expect(Check.isArrayOfIntegers(Uint8ClampedArray.from([1, 2, 4]), 1, 3)).toBe(false);
+    });
 
+    test("isArrayOfBooleans test", () => {
         expect(Check.isArrayOfBooleans([true, false, false])).toBe(true);
         expect(Check.isArrayOfBooleans([1, 0, true])).toBe(false);
         expect(Check.isArrayOfBooleans([])).toBe(false);
+    });
 
+    test("checkColon test", () => {
         expect(Check.checkColon([0, 1, 10])).toEqual([0, 1, 10]);
         expect(Check.checkColon([[0, 1, 10]])).toEqual([0, 1, 10]);
-
         expect(Check.checkColon([0, 1, 10], 11)).toEqual([0, 1, 10]);
         expect(Check.checkColon([0, 1, -2], 11)).toEqual([0, 1, 9]);
         expect(Check.checkColon([-10, 0])).toEqual([-10, 1, 0]);
         expect(Check.checkColon([10, -2, 0])).toEqual([10, -2, 0]);
-
         expect(Check.checkColon([0, 10])).toEqual([0, 1, 10]);
         expect(Check.checkColon(3)).toEqual([3, 1, 3]);
         expect(Check.checkColon([3])).toEqual([3, 1, 3]);
+    });
 
+    test("checkSize test", () => {
         expect(Check.checkSize(5)).toEqual([5, 1]);
         expect(Check.checkSize([[5, 1]])).toEqual([5, 1]);
         expect(Check.checkSize(5, 'row')).toEqual([1, 5]);
         expect(Check.checkSize(5, 'square')).toEqual([5, 5]);
         expect(Check.checkSize([4, 2, 1])).toEqual([4, 2]);
+    });
 
+    test("checkSizeEquals test", () => {
         expect(Check.checkSizeEquals([1], [1, 1])).toEqual([1, 1]);
         expect(Check.checkSizeEquals([1, 1], [1, 1, 1])).toEqual([1, 1]);
         // expect(Check.checkSizeEquals([1, 1], [1, 1, 1], false)).toThrow(Error);
         // expect(Check.checkSizeEquals([4, 2], [2, 4])).toThrow(Error);
+    });
 
+    test("areArrayEquals test", () => {
         expect(Check.areArrayEquals([4, 2], [4, 2])).toBe(true);
         expect(Check.areArrayEquals([4, 2], [4, 2, undefined])).toBe(false);
         expect(Check.areArrayEquals([4, 2], [4, 1])).toBe(false);
         expect(Check.areArrayEquals([4, 2], [4, 2, 1])).toBe(false);
-
         expect(Check.areSizeEquals([1], [1, 1])).toEqual([1, 1]);
         expect(Check.areSizeEquals([1, 1], [1, 1, 1])).toEqual([1, 1]);
         expect(Check.areSizeEquals([4, 2, 1], [4, 2])).toEqual([4, 2]);
@@ -513,11 +537,17 @@ describe("MatrixxView First test section", () => {
         expect(Check.areSizeEquals([4, 2], [2, 4])).toBe(false);
         expect(Check.areSizeEquals([4, 2], [4, 2, 4, 3])).toBe(false);
         expect(Check.areSizeEquals([4, 2, 2], [4, 2])).toBe(false);
+    });
 
+    test("checkOpts test", () => {
         expect(Check.checkOpts({'n': 10, 'b': true},  {'n': 5})).toEqual({'n': 5, 'b': true});
+    });
 
+    test("checkRange test", () => {
         expect(Check.checkRange([0, 3])).toEqual([0, 3]);
+    });
 
+    test("getTypeConstructor test", () => {
         expect(Check.getTypeConstructor("bool")).toBe(Uint8ClampedArray);
         expect(Check.getTypeConstructor(Uint8Array)).toBe(Uint8Array);
     });

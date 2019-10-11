@@ -113,7 +113,7 @@ Check.isBoolean = function (obj) {
  *  True iff the argument is an array, typed array, or similar.
  */
 Check.isArrayLike = function (obj) {
-    return (typeof obj === "object") && (obj.length !== undefined);
+    return (obj !== null) && (typeof obj === "object") && (Check.isInteger(obj.length, 0));
 };
 
 /** Test whether an object is an array-like made of numbers.
@@ -505,8 +505,14 @@ Check.checkColon = function (c, length = Infinity, start = (length === Infinity 
     }
 
     // Check format
-    if (!this.isArrayOfIntegers(c)) {
-        throw new Error("checkColon: colon operator must be integers.");
+    if (length > 0 && length < Infinity) {
+        if  (!this.isArrayOfIntegers(c)) {
+            throw new Error("checkColon: If length is specified, arguments must be integers.");
+        }
+    } else if (length === Infinity) {
+        if  (!this.isArrayOfNumbers(c)) {
+            throw new Error("checkColon: Arguments must be numbers.");
+        }
     }
 
     // Get values
@@ -531,23 +537,19 @@ Check.checkColon = function (c, length = Infinity, start = (length === Infinity 
     if (this.isInteger(length, 0)) {
         a = (a >= 0) ? a : a + length;
         b = (b >= 0) ? b : b + length;
+        // Check indices
+        if (!this.isArrayOfIntegers([a, b], start, length - 1)) {
+            throw new Error("checkColon: First or last elements out of bounds.");
+        }
     } else if (length !== Infinity) {
-        throw new Error("checkColon: if specified, length must be a non-negative integer.");
-    }
-
-    // Check indices
-    if (!this.isArrayOfIntegers([a, b])) {
-        throw new Error("checkColon: first and last elements must be integers");
-    }
-    if (!this.isArrayOfIntegers([a, b], start, length - 1)) {
-        throw new Error("checkColon: first or last elements out of bounds");
+        throw new Error("checkColon: If specified, length must be a non-negative integer.");
     }
 
     // Step
     if (!s) {
         s = (a <= b) ? +1 : -1;
     } else if ((b - a) * s < 0) {
-        throw new Error("checkColon: invalid step.");
+        throw new Error("checkColon: Invalid step argument.");
     }
 
     // return result
