@@ -135,7 +135,7 @@ Check.isArrayLike = function (obj) {
  *  and contains only numbers between `min` and `max`.
  */
 Check.isArrayOfNumbers = function (obj, min = -Infinity, max = Infinity) {
-    if (!this.isArrayLike(obj) || obj.length < 1) {
+    if (!this.isArrayLike(obj)) {
         return false;
     }
     let i, ie;
@@ -165,7 +165,7 @@ Check.isArrayOfNumbers = function (obj, min = -Infinity, max = Infinity) {
  * @todo check for typed array.
  */
 Check.isArrayOfIntegers = function (obj, min = -Infinity, max = Infinity) {
-    if (!this.isArrayLike(obj) || obj.length < 1) {
+    if (!this.isArrayLike(obj)) {
         return false;
     }
     let i, ie;
@@ -227,7 +227,7 @@ Check.isArrayOfIntegers = function (obj, min = -Infinity, max = Infinity) {
  *  True iff the argument is an array-like and contains only booleans.
  */
 Check.isArrayOfBooleans = function (obj) {
-    if (!this.isArrayLike(obj) || obj.length < 1) {
+    if (!this.isArrayLike(obj)) {
         return false;
     }
 

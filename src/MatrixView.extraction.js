@@ -22,13 +22,13 @@ export default function extractionExtension (MatrixView) {
      * @todo create the new array? write example
      */
     MatrixView.prototype.extractTo = function (dataIn, dataOut) {
-
+        const eMsg = `MatrixView.extractTo: `;
         // Check arguments
         if (!Check.isArrayLike(dataOut)) {
-            throw new Error('MatrixView.extractTo: Invalid output data.');
+            throw new Error(`${eMsg}Invalid output data.`);
         }
         if (dataOut.length !== this.getInitialLength()) {
-            throw new Error('MatrixView.extractTo: Output data length is invalid.');
+            throw new Error(`${eMsg}Output data length is invalid. (Expected ${this.getInitialLength()}, got ${dataOut.length}).`);
         }
 
         // Input iterator
@@ -39,7 +39,7 @@ export default function extractionExtension (MatrixView) {
 
             // Copy an array
             if (dataOut === dataIn) {
-                throw new Error('MatrixView.extractTo: cannot perform in-place extraction.');
+                throw new Error(`${eMsg}Cannot perform in-place extraction.`);
             }
             if (this.isIndicesIndexed(0)) {
                 const steps = this.getSteps(0);
@@ -84,7 +84,7 @@ export default function extractionExtension (MatrixView) {
             }
 
         } else {
-            throw new Error('MatrixView.extractTo: Invalid input data.');
+            throw new Error(`${eMsg}Invalid input data.`);
         }
 
         return dataOut;

@@ -37,7 +37,6 @@ export class SubIterator {
 *  First dimension to iterate on.
 */
 export class Iterator {
-
     constructor(view, dim) {
         let first, step, end, dimLength, it, index, stop;
         // Subiterators on upper dimensions
@@ -90,7 +89,7 @@ export class Iterator {
             }
             stop = (index + end);
             index += first;
-            return index;
+            return index === stop ? -1 : index;
         };
         this.isEnd = () => index === -1;
         this.end = () => -1;
@@ -120,6 +119,7 @@ export class SubIteratorIndices {
         let index, stepIndex, stop;
         const first = indices[0];
         const steps = SubIteratorIndices.getSteps(indices);
+        // console.log(steps);
         this.iterator = () => index += steps[++stepIndex];
         this.begin = (off = offset) => {
             stepIndex = 0;
@@ -162,7 +162,6 @@ export class SubIteratorIndices {
 *  First dimension to iterate on.
 */
 export class IteratorIndices {
-
     constructor(view, dim) {
         const indices = view.getIndices(dim),
             steps = view.getSteps(dim);

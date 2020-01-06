@@ -21,7 +21,6 @@ export default MatrixView;
 import Check from "./Check.object.js";
 export {Check};
 
-
 import iteratorsExtension from "./MatrixView.iterators.js";
 iteratorsExtension(MatrixView);
 

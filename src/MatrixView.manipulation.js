@@ -22,6 +22,7 @@ import Check from "./Check.object.js";
 * @namespace MatrixView
 */
 export default function manipulationExtension (MatrixView) {
+
     /** Allow to select an subpart of the MatrixView on each dimension.
     *
     * __Also see:__
@@ -66,27 +67,29 @@ export default function manipulationExtension (MatrixView) {
     * @chainable
     */
     MatrixView.prototype.select = function (...args) {
-        let i;
-        const ie = args.length;
-        for (i = 0; i < ie; i++) {
-            var arg = args[i];
+        let dim;
+        for (dim = 0; dim < args.length; dim++) {
+            const arg = args[dim];
             // Arg is an array
             if (Check.isArrayLike(arg)) {
 
-                // Arg is an array containing an array [[<ind>]]
                 if (Check.isArrayLike(arg[0])) {
-                    this.selectDimByIndices(i, arg[0]);
+                    // Arg is an array containing an array [[<ind>]]
+                    this.selectDimByIndices(dim, arg[0]);
+                } else if (Check.isArrayOfBooleans(arg) && arg.length === this.getSize(dim)) {
                     // Arg is a boolean array [<boolean>]
-                } else if (Check.isArrayOfBooleans(arg)) {
-                    this.selectDimByBooleans(i, arg);
-                    // Arg is a colon operator but not [<start, step, end>]
+                    this.selectDimByBooleans(dim, arg);
                 } else if (arg.length !== 0) {
-                    this.selectDimByColon(i, arg);
+                    // Arg is a colon operator but not [<start, step, end>]
+                    this.selectDimByColon(dim, arg);
+                } else if (!Check.isArrayLike(arg) && arg.length !== 0) {
+                    // If not an empty selector: []
+                    throw new Error(`MatrixView.select: Invalid selector ${arg}.`);
                 }
 
                 // Arg is just an integer <integer>
             } else if (Check.isInteger(arg)) {
-                this.selectDimByColon(i, arg);
+                this.selectDimByColon(dim, arg);
                 // Otherwise
             } else {
                 throw new Error("MatrixView.select: Invalid selection.");

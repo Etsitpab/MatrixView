@@ -18,8 +18,9 @@ describe("MatrixxView class test section", () => {
     test("MatrixView shiftDimension", () => {
         const v = new MatrixView([1, 2, 3, 4, 5, 6]);
 
-        v.shiftDimension();
+        const n = v.shiftDimension();
         expect(v.getSize()).toEqual([2, 3, 4, 5, 6]);
+        expect(n).toEqual(1);
         v.restore();
 
         v.shiftDimension(2);
@@ -33,7 +34,6 @@ describe("MatrixxView class test section", () => {
         const v2 = new MatrixView([1, 1, 1, 1, 5]);
         v2.shiftDimension();
         expect(v2.getSize()).toEqual([5, 1]);
-
     });
 
     test("MatrixView swapDimensions", () => {
@@ -80,7 +80,7 @@ describe("MatrixxView class test section", () => {
         expect(v.getSize()).toEqual([5, 5]);
     });
 
-    test("MatrixView selectDimByColon", () => {
+    test("MatrixView selectDimByColon / selectDimByIndices / selectDimByBooleans", () => {
         const v = new MatrixView([5, 5]);
         const data = [
              0,  1,  2,  3,  4,
@@ -92,12 +92,22 @@ describe("MatrixxView class test section", () => {
         {
             v.selectDimByIndices(0, [1, 3, 4]);
             v.selectDimByColon(0, [0, 2, -1]);
-            // v.selectDimByIndices(1, [1, 2, 3, 4]);
-            // v.selectDimByIndices(1, [1]);
-            v.selectDimByIndices(1, [2]);
+            v.selectDimByIndices(1, [1, 2, 3, 4]);
+            v.selectDimByIndices(1, [1]);
+            // v.selectDimByIndices(1, [2]);
             let out = new Array(v.getLength());
             v.extractFrom(data, out);
             expect(out).toEqual([11, 14]);
+        }
+        { // Check empty selection
+            v.restore();
+            v.selectDimByIndices(0, []);
+            expect([...v.getIterator()]).toStrictEqual([]);
+            expect(v.getSize()).toStrictEqual([0, 5]);
+            v.restore();
+            v.selectDimByBooleans(1, [false, false, false, false, false]);
+            expect([...v.getIterator()]).toStrictEqual([]);
+            expect(v.getSize()).toStrictEqual([5, 0]);
         }
     });
 
@@ -472,7 +482,7 @@ describe("Check object test", () => {
         expect(Check.isArrayOfNumbers([-1, 3.14, 5])).toBe(true);
         expect(Check.isArrayOfNumbers({0: 3, 1:2, 2: 3.14, length: 3})).toBe(true);
         expect(Check.isArrayOfNumbers([1, true, 2])).toBe(false);
-        expect(Check.isArrayOfNumbers([])).toBe(false);
+        expect(Check.isArrayOfNumbers([])).toBe(true);
         expect(Check.isArrayOfNumbers([1, "", 2])).toBe(false);
         expect(Check.isArrayOfNumbers([1, NaN, 2])).toBe(false);
         expect(Check.isArrayOfNumbers([1, Infinity, 2])).toBe(true);
@@ -482,7 +492,7 @@ describe("Check object test", () => {
         expect(Check.isArrayOfIntegers([1, 2, -3])).toBe(true);
         expect(Check.isArrayOfIntegers([1, 2, -3], 1, 3)).toBe(false);
         expect(Check.isArrayOfIntegers([1, 2.2, -3])).toBe(false);
-        expect(Check.isArrayOfIntegers([])).toBe(false);
+        expect(Check.isArrayOfIntegers([])).toBe(true);
         expect(Check.isArrayOfIntegers(Uint8Array.from([1, 2, 3]), 1, 3)).toBe(true);
         expect(Check.isArrayOfIntegers(Uint16Array.from([1, 2, 3]))).toBe(true);
         expect(Check.isArrayOfIntegers(Int16Array.from([1, 2, 3]))).toBe(true);
@@ -494,7 +504,7 @@ describe("Check object test", () => {
     test("isArrayOfBooleans test", () => {
         expect(Check.isArrayOfBooleans([true, false, false])).toBe(true);
         expect(Check.isArrayOfBooleans([1, 0, true])).toBe(false);
-        expect(Check.isArrayOfBooleans([])).toBe(false);
+        expect(Check.isArrayOfBooleans([])).toBe(true);
     });
 
     test("checkColon test", () => {

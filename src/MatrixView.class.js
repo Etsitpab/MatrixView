@@ -41,10 +41,9 @@ export default class MatrixView {
 
     constructor(arg) {
 
-        //////////////////////////////////////////////////////////////////
-        //                   Initialization Functions                   //
-        //////////////////////////////////////////////////////////////////
-
+        ////////////////////////////////////////////////////////////////////////
+        //                      Initialization Functions                      //
+        ////////////////////////////////////////////////////////////////////////
 
         let first;          // Start points for each dimension
         let step;           // Step between two values
@@ -97,9 +96,9 @@ export default class MatrixView {
         };
 
 
-        //////////////////////////////////////////////////////////////////
-        //                  Stack of Views manipulation                 //
-        //////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        //                     Stack of Views manipulation                    //
+        ////////////////////////////////////////////////////////////////////////
 
         /** Save the current MatrixView on the Stack.
          *
@@ -150,9 +149,9 @@ export default class MatrixView {
         };
 
 
-        //////////////////////////////////////////////////////////////////
-        //                         Basics Getters                       //
-        //////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        //                            Basics Getters                          //
+        ////////////////////////////////////////////////////////////////////////
 
         /** Get the number of dimensions.
          *
@@ -513,9 +512,9 @@ export default class MatrixView {
         };
 
 
-        //////////////////////////////////////////////////////////////////
-        //                      Basics manipulations                    //
-        //////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        //                         Basics manipulations                       //
+        ////////////////////////////////////////////////////////////////////////
 
         /** Add a singleton dimensions at the end.
          *
@@ -630,12 +629,10 @@ export default class MatrixView {
          * @chainable
          */
         this.selectDimByIndices = (d, ind) => {
-
             if (!Check.isInteger(d, 0)) {
                 throw new Error('MatrixView.selectDimByIndices: Dimension ' +
                                 'must be a positive integer.');
             }
-
             if (!Check.isArrayOfIntegers(ind, 0, this.getSize(d) - 1)) {
                 throw new Error('MatrixView.selectDimByIndices: Invalid index.');
             }
@@ -651,7 +648,7 @@ export default class MatrixView {
                 }
             } else {
                 for (i = 0; i < ie; i++) {
-                    ind[i] = indices[ind[i]];
+                    ind[i] = indices[d][ind[i]];
                 }
             }
             if (ind[0] === undefined) {
@@ -659,7 +656,7 @@ export default class MatrixView {
             }
             first[d]   = ind[0];
             step[d]    = 1;
-            size[d]    = ind.length;
+            size[d]    = ind[0] === -1 ? 0 : ind.length;
             indices[d] = ind;
             return this;
         };
@@ -785,29 +782,29 @@ export default class MatrixView {
                     step.push(1);
                     size.push(1);
                 }
-            } else {
-                const ndims = this.getDimLength();
-                if (!Check.isInteger(n, 1 - ndims, ndims - 1)) {
-                    throw new Error('MatrixView.shiftDimension: invalid shift.');
-                }
-                for (i = 0; i < n; i++) {
-                    first.push(first.shift());
-                    step.push(step.shift());
-                    size.push(size.shift());
-                }
-                for (i = n; i < 0; i++) {
-                    first.unshift(0);
-                    step.unshift(1);
-                    size.unshift(1);
-                }
+                return i;
+            }
+            const ndims = this.getDimLength();
+            if (!Check.isInteger(n, 1 - ndims, ndims - 1)) {
+                throw new Error('MatrixView.shiftDimension: invalid shift.');
+            }
+            for (i = 0; i < n; i++) {
+                first.push(first.shift());
+                step.push(step.shift());
+                size.push(size.shift());
+            }
+            for (i = n; i < 0; i++) {
+                first.unshift(0);
+                step.unshift(1);
+                size.unshift(1);
             }
             return this;
         };
 
 
-        //////////////////////////////////////////////////////////////////
-        //                          Constructor                         //
-        //////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        //                             Constructor                            //
+        ////////////////////////////////////////////////////////////////////////
 
         // New view constructor
         if (Check.isArrayLike(arg)) {
@@ -825,6 +822,7 @@ export default class MatrixView {
 
         // Otherwise, argument is invalid
         throw new Error('MatrixView: invalid argument.');
+
     }
 
 }
