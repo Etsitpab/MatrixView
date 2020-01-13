@@ -1,6 +1,6 @@
 {
     "name": "@etsitpab/matrixview",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "This package provides a class to manipulate multidimensionnal arrays.",
     "main": "index.js",
     "repository": {
@@ -24,8 +24,8 @@
         "doc": "./node_modules/.bin/esdoc"
     },
     "devDependencies": {
-        "@babel/core": "^7.5.5",
-        "@babel/preset-env": "^7.5.5",
+        "@babel/core": "^7.7.7",
+        "@babel/preset-env": "^7.7.7",
         "babel-jest": "^24.9.0",
         "esdoc": "^1.1.0",
         "esdoc-standard-plugin": "^1.0.0",
