@@ -1,6 +1,6 @@
 {
     "name": "@etsitpab/matrixview",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "This package provides a class to manipulate multidimensionnal arrays.",
     "main": "index.js",
     "repository": {
