@@ -1,43 +1,39 @@
 {
     "name": "@etsitpab/matrixview",
-    "version": "1.0.3",
     "description": "This package provides a class to manipulate multidimensionnal arrays.",
-    "main": "index.js",
+    "author": "Baptiste Mazin",
+    "license": "GPL-3.0",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Etsitpab/MatrixView.git"
     },
-    "author": "Baptiste Mazin",
-    "license": "GPL-3.0",
+    "version": "1.0.3",
     "keywords": [
         "multidimensionnal",
         "array",
         "matrix",
         "vector"
     ],
+    "type": "module",
+    "main": "./src/MatrixView.js",
+    "exports": "./src/MatrixView.js",
+    "scripts": {
+        "test": "jest --coverage",
+        "clean": "rm -rf package-lock.json node_modules",
+        "doc": "./node_modules/.bin/esdoc",
+        "console": "node --input-type=module --eval \"import MatrixView from '@etsitpab/matrixview'; console.log(MatrixView);\""
+    },
     "bugs": {
         "url": "https://github.com/Etsitpab/MatrixView/issues"
     },
     "homepage": "https://github.com/Etsitpab/MatrixView#readme",
-    "scripts": {
-        "test": "jest --coverage",
-        "doc": "./node_modules/.bin/esdoc"
+    "dependencies": {
+        "@etsitpab/logger": "file:../logger"
     },
     "devDependencies": {
-        "@babel/core": "^7.7.7",
-        "@babel/preset-env": "^7.7.7",
-        "babel-jest": "^24.9.0",
         "esdoc": "^1.1.0",
         "esdoc-standard-plugin": "^1.0.0",
-        "jest": "^24.9.0"
-    },
-    "dependencies": {
-        "@etsitpab/logger": "^1.0.2",
-        "esm": "^3.2.25"
-    },
-    "jest": {
-        "transform": {
-            "\\.js$": "babel-jest"
-        }
+        "@babel/preset-env": "^7.8.4",
+        "jest": "^25.1.0"
     }
 }
