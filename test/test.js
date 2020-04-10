@@ -1,8 +1,6 @@
 /* global describe test expect */
 import MatrixView, {Check} from "../src/MatrixView.js";
-import getLogger from "@etsitpab/logger";
 
-const logger = getLogger("MatrixView");
 
 describe("MatrixxView class test section", () => {
 
@@ -348,7 +346,6 @@ describe("MatrixxView class test section", () => {
     });
 
     test(`Test iterators`, () => {
-        logger.log("Test 1");
         const view = new MatrixView([5, 5, 2]);
         const result = [
              0,  1,  2,  3,  4,
